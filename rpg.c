@@ -4,67 +4,92 @@
 #include <time.h>
 /*
  * author:	Lethael
- * date:	171204
+ * creationdate:171204
+ * correction:	SDK666
+ * translation:	SDK666
+ * lastupdate:	171206
+ * lastupdateby:SDK666
  * 
- * base de jeu type RPG simplifié
+ * game base for simplified RPG-like
  */
 
-struct Personnages //Héro + mobs
+/**
+ * structure Character
+ * 	defines anyone (player or opponent)
+ */
+struct Character
 {
-	char nom[30];
-	int vie;
-	int attaque;
-	int defense;	
+	char Name[30];
+	int Health;	//	points of life
+	int Strength;	//	attack power
+	int Resistance;	//	defense
 };
 
-void InitPersonnages(struct Personnages *perso); 
-void InfligerDegats(struct Personnages attaquant, struct Personnages *defenseur);
+/**
+ * function InitCharacter
+ * 	create *character
+ * 	based on struct Character
+ */
+void InitCharacter(struct Character *character);
+/**
+ * function DamageCharacter
+ * 	define damages done by Attaker to *Defender
+ */
+void DamageCharacter(struct Character Attaker, struct Character *Defender);
 
 main()
 {
-	srand(time(NULL)); //Fonction rnd à n'appeler qu'une seule fois
-	struct Personnages hero;
-	struct Personnages monstre;
+	/*	initialize srand to current time	*/
+	srand(time(NULL));
+	/*	variables	*/
+	struct Character hero;		//	player
+	struct Character monster;	//	opponent
+	/*	player's choice	*/
+	char PlayerAction = '\0';
+	/*	initialize player and opponent	*/
+	InitCharacter(&hero); // A modifier pour mettre en dur juste pour le héro	//	à discuter ;)
+	InitCharacter(&monster);
 	
-	char choix = 'z';
-	
-	InitPersonnages(&hero); // A modifier pour mettre en dur juste pour le héro
-	InitPersonnages(&monstre);
-	
-	
-	//Boucle combat à inclure dans fonc Combat
+	//	fight loop, to put in a Fight function
 	do
 	{
-		choix = 'z';
-		printf("C'est votre tour d'attaquer, que voulez-vous faire?\n[A]ttaquer\n[D]efendre\nVotre choix? : ");
-		scanf("%c", &choix);
+		/*	reset PlayerAction	*/
+		PlayerAction = '\0';
+		/*	invite Player to take action	*/
+		printf("C'est votre tour d'attaquer, que voulez-vous faire?\n\t[A]ttaquer\n\t[D]efendre\nVotre choix? : ");
+		scanf("%c", &PlayerAction);
 		getchar();
-		printf("Vous avez entre %c\n", choix);
-		
-		if(choix != 'a')
+		/*	give feedback of keyboard entry	*/
+		printf("Vous avez entre : %c\n", PlayerAction);
+		/*	result of the chosen action	*/
+		if(PlayerAction != 'a')
 				printf("Mauvais choix \n");
-		
-		if (choix == 'a')
-			InfligerDegats(hero, &monstre);
-		
-		printf("%d vie monstre\n", monstre.vie);
-	}while(hero.vie >= 0 && monstre.vie >= 0);
+		if (PlayerAction == 'a')
+			DamageCharacter(hero, &monster);
+		//	for now it can only be an attack from the player
+		printf("%d vie monstre\n", monster.Health);
+	}while(hero.Health >= 0 && monster.Health >= 0);	//	as long as both are alive
 }
 
-void InitPersonnages(struct Personnages *perso)
+void InitCharacter(struct Character *character)
 {
-	printf("Veuillez saisir le nom du hero : \n");
-	scanf("%s", perso->nom);
+	//	invite message to be changed according to character creation decisions
+	/*	sets character name	*/
+	printf("Veuillez saisir le nom du personnage : \n");
+	scanf("%s", character->Name);
 	getchar();
-	perso->vie = 100;
-	perso->attaque = (rand() % (10 - 1 + 1)) + 1; //Entre 10 et 1
-	perso->defense = (rand() % (7 - 1 + 1)) + 1;
+	character->Health = 100;	//	set character's health
+	/*	randomize Strength and Resistance	*/
+	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Entre 10 et 1
+	character->Resistance = (rand() % (7 - 1 + 1)) + 1;
 }
 
-void InfligerDegats(struct Personnages attaquant, struct Personnages *defenseur)
+void DamageCharacter(struct Character Attaker, struct Character *Defender)
 {
-	int deg;
-	deg = (attaquant.attaque + (rand() % (7 - 1 + 1)) + 1) - defenseur->defense;
-	printf("%d degats !\n", deg);
-	defenseur->vie -= deg;
+	//	!!! WARNING : there's no check if defender has better resistance than the attacker's strength !!!
+	//		actually a NPC can gain HP if damage is negative !!!
+	int damage;
+	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance;
+	printf("%d degats !\n", damage);
+	Defender->Health -= damage;
 }	
