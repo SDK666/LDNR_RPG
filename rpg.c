@@ -3,7 +3,7 @@
 #include <ctype.h>
 #include <time.h>
 /*
- * author:	Lethael
+ * author:		Lethael
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
@@ -20,10 +20,22 @@
 struct Character
 {
 	char Name[30];
-	int Health;	//	points of life
+	int Health;		//	points of life
 	int Strength;	//	attack power
 	int Resistance;	//	defense
 };
+
+/**
+ * function InitPlayer
+ * 	create the Player Character
+ */
+void InitPlayer(struct Character *character);
+
+/**
+ * function InitMonster
+ * 	create the Non Player Character
+ */
+void InitMonster(struct Character *character);
 
 /**
  * function InitCharacter
@@ -31,11 +43,18 @@ struct Character
  * 	based on struct Character
  */
 void InitCharacter(struct Character *character);
+
 /**
  * function DamageCharacter
  * 	define damages done by Attaker to *Defender
  */
 void DamageCharacter(struct Character Attaker, struct Character *Defender);
+
+/**
+ * function Fight
+ * 	define the involved fighters
+ */
+void Fight(struct Character Fighter1, struct Character Fighter2);
 
 main()
 {
@@ -44,13 +63,51 @@ main()
 	/*	variables	*/
 	struct Character hero;		//	player
 	struct Character monster;	//	opponent
+	/*	initialize player and opponent	*/
+	InitPlayer(&hero);
+	InitMonster(&monster);
+	
+	/*	the fight	*/
+	Fight(hero,monster);
+}
+
+void InitCharacter(struct Character *character)
+{
+	character->Health = 100;	//	set character's health
+	/*	randomize Strength and Resistance	*/
+	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Entre 10 et 1
+	character->Resistance = (rand() % (7 - 1 + 1)) + 1;
+}
+
+void InitPlayer(struct Character *character)
+{
+	/*	sets character name	*/
+	printf("Veuillez saisir votre nom : \n");
+	scanf("%s", character->Name);
+	getchar();
+	InitCharacter(character);
+}
+
+void InitMonster(struct Character *character)
+{
+	strcpy(character->Name,"someMonster");
+	InitCharacter(character);
+}
+
+void DamageCharacter(struct Character Attaker, struct Character *Defender)
+{
+	//	!!! WARNING : there's no check if defender has better resistance than the attacker's strength !!!
+	//		actually a NPC can gain HP if damage is negative !!!
+	int damage;
+	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance;
+	printf("%d degats !\n", damage);
+	Defender->Health -= damage;
+}	
+
+void Fight(struct Character Fighter1, struct Character Fighter2)
+{
 	/*	player's choice	*/
 	char PlayerAction = '\0';
-	/*	initialize player and opponent	*/
-	InitCharacter(&hero); // A modifier pour mettre en dur juste pour le héro	//	à discuter ;)
-	InitCharacter(&monster);
-	
-	//	fight loop, to put in a Fight function
 	do
 	{
 		/*	reset PlayerAction	*/
@@ -65,31 +122,8 @@ main()
 		if(PlayerAction != 'a')
 				printf("Mauvais choix \n");
 		if (PlayerAction == 'a')
-			DamageCharacter(hero, &monster);
+			DamageCharacter(Fighter1, &Fighter2);
 		//	for now it can only be an attack from the player
-		printf("%d vie monstre\n", monster.Health);
-	}while(hero.Health >= 0 && monster.Health >= 0);	//	as long as both are alive
+		printf("%d vie monstre\n", Fighter2.Health);
+	} while(Fighter1.Health >= 0 && Fighter2.Health >= 0);	//	as long as both are alive
 }
-
-void InitCharacter(struct Character *character)
-{
-	//	invite message to be changed according to character creation decisions
-	/*	sets character name	*/
-	printf("Veuillez saisir le nom du personnage : \n");
-	scanf("%s", character->Name);
-	getchar();
-	character->Health = 100;	//	set character's health
-	/*	randomize Strength and Resistance	*/
-	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Entre 10 et 1
-	character->Resistance = (rand() % (7 - 1 + 1)) + 1;
-}
-
-void DamageCharacter(struct Character Attaker, struct Character *Defender)
-{
-	//	!!! WARNING : there's no check if defender has better resistance than the attacker's strength !!!
-	//		actually a NPC can gain HP if damage is negative !!!
-	int damage;
-	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance;
-	printf("%d degats !\n", damage);
-	Defender->Health -= damage;
-}	
