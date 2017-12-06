@@ -2,6 +2,12 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+/*
+ * author:	Lethael
+ * date:	171204
+ * 
+ * base de jeu type RPG simplifié
+ */
 
 struct Personnages //Héro + mobs
 {
