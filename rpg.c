@@ -81,7 +81,7 @@ void InitCharacter(struct Character *character)
 	character->Health = 100;	//	set character's health
 	/*	randomize Strength and Resistance	*/
 	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Between 1 and 10
-	printf("%d Strength\n", character->Strength);
+	printf("%d Strength\n", character->Strength); //Just for test
 	character->Resistance = (rand() % (6 - 1 + 1)) + 1;
 }
 
