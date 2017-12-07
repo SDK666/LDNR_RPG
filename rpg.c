@@ -7,8 +7,8 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171206
- * lastupdateby:SDK666
+ * lastupdate:	171207
+ * lastupdateby:Lethael
  * 
  * game base for simplified RPG-like
  */
@@ -80,8 +80,9 @@ void InitCharacter(struct Character *character)
 	getchar();
 	character->Health = 100;	//	set character's health
 	/*	randomize Strength and Resistance	*/
-	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Entre 10 et 1
-	character->Resistance = (rand() % (7 - 1 + 1)) + 1;
+	character->Strength = (rand() % (10 - 1 + 1)) + 1; //Between 1 and 10
+	printf("%d Strength\n", character->Strength);
+	character->Resistance = (rand() % (6 - 1 + 1)) + 1;
 }
 
 void DamageCharacter(struct Character Attaker, struct Character *Defender)
@@ -89,7 +90,7 @@ void DamageCharacter(struct Character Attaker, struct Character *Defender)
 	//	!!! WARNING : there's no check if defender has better resistance than the attacker's strength !!!
 	//		actually a NPC can gain HP if damage is negative !!!
 	int damage;
-	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance;
+	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance / 2; // With divid by 2, result is better
 	printf("%d degats !\n", damage);
 	Defender->Health -= damage;
 }	
