@@ -17,52 +17,58 @@
  * structure Character
  * 	defines anyone (player or opponent)
  */
-struct Character
+typedef struct Character
 {
 	char Name[30];
 	int Health;		//	points of life
 	int Strength;	//	attack power
 	int Resistance;	//	defense
-};
+}Character_t;
 
 /**
  * function InitPlayer
  * 	create the Player Character
  */
-void InitPlayer(struct Character *character);
+void InitPlayer(Character_t *character);
 
 /**
  * function InitMonster
  * 	create the Non Player Character
  */
-void InitMonster(struct Character *character);
+void InitMonster(Character_t *character);
 
 /**
  * function InitCharacter
  * 	create *character
- * 	based on struct Character
+ * 	based on Character_t
  */
-void InitCharacter(struct Character *character);
+void InitCharacter(Character_t *character);
 
 /**
  * function DamageCharacter
  * 	define damages done by Attaker to *Defender
  */
-void DamageCharacter(struct Character Attaker, struct Character *Defender);
+void DamageCharacter(Character_t Attaker, Character_t *Defender);
 
 /**
  * function Fight
  * 	define the involved fighters
  */
-void Fight(struct Character Fighter1, struct Character Fighter2);
+void Fight(Character_t Fighter1, Character_t Fighter2);
+
+/**
+ * function DisplayCharacter
+ * 	shows the character stats
+ */
+void DisplayCharacter(const )
 
 main()
 {
 	/*	initialize srand to current time	*/
 	srand(time(NULL));
 	/*	variables	*/
-	struct Character hero;		//	player
-	struct Character monster;	//	opponent
+	Character_t hero;		//	player
+	Character_t monster;	//	opponent
 	/*	initialize player and opponent	*/
 	InitPlayer(&hero);
 	InitMonster(&monster);
@@ -71,7 +77,7 @@ main()
 	Fight(hero,monster);
 }
 
-void InitCharacter(struct Character *character)
+void InitCharacter(Character_t *character)
 {
 	character->Health = 100;	//	set character's health
 	/*	randomize Strength and Resistance	*/
@@ -80,7 +86,7 @@ void InitCharacter(struct Character *character)
 	character->Resistance = (rand() % (6 - 1 + 1)) + 1;
 }
 
-void InitPlayer(struct Character *character)
+void InitPlayer(Character_t *character)
 {
 	/*	sets character name	*/
 	printf("Veuillez saisir votre nom : \n");
@@ -89,13 +95,13 @@ void InitPlayer(struct Character *character)
 	InitCharacter(character);
 }
 
-void InitMonster(struct Character *character)
+void InitMonster(Character_t *character)
 {
 	strcpy(character->Name,"someMonster");
 	InitCharacter(character);
 }
 
-void DamageCharacter(struct Character Attaker, struct Character *Defender)
+void DamageCharacter(Character_t Attaker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int damage=0;
@@ -108,7 +114,7 @@ void DamageCharacter(struct Character Attaker, struct Character *Defender)
 	}
 }	
 
-void Fight(struct Character Fighter1, struct Character Fighter2)
+void Fight(Character_t Fighter1, Character_t Fighter2)
 {
 	/*	player's choice	*/
 	char PlayerAction = '\0';
