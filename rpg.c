@@ -3,6 +3,14 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#define DEBUG 1
+
+#ifdef DEBUG
+# define DEBUG_PRINT(x) printf x
+#else
+# define DEBUG_PRINT(x) do {} while (0)
+#endif
+
 /*
  * author:		Lethael
  * creationdate:171204
@@ -132,7 +140,7 @@ void InitCharacter(Character_t *character)
 	if(character->Strength == 18)
 		character->StrBonus = 3;
 	/*	End of attribute Strenght Bonus	*/
-	printf("%d Strength\n", character->Strength); //Just for test
+	DEBUG_PRINT(("%d Strength\n", character->Strength)); //Just for test
 	/*	########## END STRENGTH ##########	*/
 	
 	/*	########## BEGIN RESISTANCE ##########	*/
@@ -145,14 +153,13 @@ void InitCharacter(Character_t *character)
 	if(character->Resistance == 18)
 		character->ResBonus = 3;
 	/*	End of attribute ResitanceBonus */
-	printf("%d Resistance\n", character->Resistance); //Just for test
+	DEBUG_PRINT(("%d Resistance\n", character->Resistance)); //Just for test
 	/*	########## END RESISTANCE ##########	*/
 	
 	/*	Initialize Health	*/
 	character->Health = 6 + character->ResBonus;	//	set character's health by 6 + ResBonus and for next lvl it's Health + rnd 1-6 + ResBonus 
-	printf("%d Health\n", character->Health); //Just for test
+	DEBUG_PRINT(("%d Health\n", character->Health)); //Just for test
 }
-
 
 void InitPlayer(Character_t *character)
 {
@@ -184,7 +191,8 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 
 void Fight(Character_t Fighter1, Character_t Fighter2)
 {
-	InitMonster(&Fighter2);
+	if(Fighter2.Health<0)
+		InitMonster(&Fighter2);
 	do
 	{
 		/*	reset PlayerAction	*/
