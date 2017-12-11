@@ -7,8 +7,8 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171207
- * lastupdateby:Lethael
+ * lastupdate:	171211
+ * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
  */
@@ -97,12 +97,15 @@ void InitMonster(struct Character *character)
 
 void DamageCharacter(struct Character Attaker, struct Character *Defender)
 {
-	//	!!! WARNING : there's no check if defender has better resistance than the attacker's strength !!!
-	//		actually a NPC can gain HP if damage is negative !!!
-	int damage;
-	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance / 2; // With divid by 2, result is better
-	printf("%d degats !\n", damage);
-	Defender->Health -= damage;
+	/*	init variables	*/
+	int damage=0;
+	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance / 2; // With divide by 2, result is better
+	/*	check result	*/
+	if(damage>0)
+	{
+		printf("%d degats !\n", damage);
+		Defender->Health -= damage;
+	}
 }	
 
 void Fight(struct Character Fighter1, struct Character Fighter2)
