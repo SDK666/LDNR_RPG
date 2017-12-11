@@ -60,7 +60,7 @@ void Fight(Character_t Fighter1, Character_t Fighter2);
  * function DisplayCharacter
  * 	shows the character stats
  */
-void DisplayCharacter(const )
+void DisplayCharacter(const Character_t *character);
 
 main()
 {
@@ -136,4 +136,8 @@ void Fight(Character_t Fighter1, Character_t Fighter2)
 		//	for now it can only be an attack from the player
 		printf("%d vie monstre\n", Fighter2.Health);
 	} while(Fighter1.Health >= 0 && Fighter2.Health >= 0);	//	as long as both are alive
+}
+
+void DisplayCharacter(const Character_t *character)
+{
 }
