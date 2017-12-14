@@ -16,11 +16,23 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171211
- * lastupdateby:SDK666
+ * lastupdate:	171214
+ * lastupdateby:Lethael
  * 
  * game base for simplified RPG-like
  */
+ 
+/**
+ * Structure Equipment
+ *	Weapons, Armors, Shields
+ */
+typedef struct Equipment
+{
+	char NameEquip[30];
+	int NumEquip;
+	int Price;
+	int Bonus;
+}Equipment_t;
 
 /**
  * structure Inventory
@@ -30,6 +42,7 @@ typedef struct Inventory
 {
 	char NameItem[255];
 	int NumItems;
+	int Price;
 }Inventory_t;
 
 /**
@@ -42,16 +55,23 @@ typedef struct Character
 	int Health;		//	points of life
 	int Strength;	//	attack power
 	int Resistance;	//	defense
+	int ArmorClass;	//	Protection's value
 	int StrBonus;	//	strenght bonus if str >= 13
 	int ResBonus;	//	resistance bonus if str >= 13
+	Inventory_t Bag[5];
+	Equipment_t Equip[5];
 }Character_t;
+
 
 /*	player's choice	*/
 char PlayerAction = '\0';
+
+/* Inventory + Equipment */
+
 /*	player	*/
 Character_t hero;
-/*	opponent	*/
-Character_t monster;
+/*	opponents	*/
+Character_t monster[2]; 
 /*	victories count	*/
 int victories=0;
 
@@ -65,7 +85,7 @@ void InitPlayer(Character_t *character);
  * function InitMonster
  * 	create the Non Player Character
  */
-void InitMonster(Character_t *character);
+void InitMonster(Character_t *TabMonster);
 
 /**
  * function InitCharacter
@@ -84,7 +104,7 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender);
  * function Fight
  * 	define the involved fighters
  */
-void Fight(Character_t Fighter1, Character_t Fighter2);
+void Fight(Character_t Fighter1, Character_t *Fighter2);
 
 /**
  * function DisplayCharacter
@@ -118,6 +138,7 @@ void Play();
 
 main()
 {
+	
 	/*	initialize srand to current time	*/
 	srand(time(NULL));
 	Play();
@@ -156,6 +177,8 @@ void InitCharacter(Character_t *character)
 	DEBUG_PRINT(("%d Resistance\n", character->Resistance)); //Just for test
 	/*	########## END RESISTANCE ##########	*/
 	
+	character->ArmorClass = 10 + character->ResBonus; /* + nothing actually. Need to have Armor 
+	
 	/*	Initialize Health	*/
 	character->Health = 6 + character->ResBonus;	//	set character's health by 6 + ResBonus and for next lvl it's Health + rnd 1-6 + ResBonus 
 	DEBUG_PRINT(("%d Health\n", character->Health)); //Just for test
@@ -172,7 +195,6 @@ void InitPlayer(Character_t *character)
 
 void InitMonster(Character_t *character)
 {
-	strcpy(character->Name,"someMonster");
 	InitCharacter(character);
 }
 
@@ -180,25 +202,42 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int damage=0;
-	damage = (Attaker.Strength + (rand() % (7 - 1 + 1)) + 1) - Defender->Resistance / 2; // With divide by 2, result is better
+	damage = (((rand() % (20 - 1 + 1)) + 1) + Attaker.StrBonus) - (Defender->ArmorClass + Defender->ResBonus); 
 	/*	check result	*/
-	if(damage>0)
+	if(damage == 0 )
 	{
-		printf("%d degats !\n", damage);
+		damage = 1;
+		printf("You hit just enough for to make %d damage !\n", damage);
+		Defender->Health -= damage;
+	}
+	if (damage < 0)
+	{
+		damage = 0;
+		printf("You missed !\n");
+	}
+	if(damage > 0)
+	{
+		printf("You slice %s, and his blood falling to the ground\nYou make %d damages !\n", Defender->Name, damage);
 		Defender->Health -= damage;
 	}
 }	
 
-void Fight(Character_t Fighter1, Character_t Fighter2)
+void Fight(Character_t Fighter1, Character_t *TabFighter2)
 {
-	if(Fighter2.Health<0)
-		InitMonster(&Fighter2);
+	int i;
+	strcpy(TabFighter2[0].Name, "Goblin");
+	strcpy(TabFighter2[1].Name, "Hobgoblin");
+	
+	i = (rand() % (1 - 0 + 1)) + 0; //Initialize i for TabMonsters
+			
+	if(TabFighter2[i].Health<=0)
+		InitMonster(&TabFighter2[i]);
 	do
 	{
 		/*	reset PlayerAction	*/
 		PlayerAction = '\0';
 		/*	invite Player to take action	*/
-		printf("C'est votre tour d'attaquer, que voulez-vous faire?\n\t[A]ttaquer\n\t[D]efendre\nVotre choix? : ");
+		printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n\t[A]ttaquer\n\t[D]efendre\nVotre choix? : ", TabFighter2[i].Name);
 		scanf("%c", &PlayerAction);
 		getchar();
 		/*	give feedback of keyboard entry	*/
@@ -207,10 +246,10 @@ void Fight(Character_t Fighter1, Character_t Fighter2)
 		if(PlayerAction != 'a')
 				printf("Mauvais choix \n");
 		if (PlayerAction == 'a')
-			DamageCharacter(Fighter1, &Fighter2);
+			DamageCharacter(Fighter1, &TabFighter2[i]);
 		//	for now it can only be an attack from the player
-		printf("%d vie monstre\n", Fighter2.Health);
-	} while(Fighter1.Health >= 0 && Fighter2.Health >= 0);	//	as long as both are alive
+		printf("%d vie monstre\n", TabFighter2[i].Health);
+	} while(Fighter1.Health >= 0 && TabFighter2[i].Health >= 0);	//	as long as both are alive
 	/*	after fight	*/
 	if(Fighter1.Health > 0)
 	{
@@ -242,17 +281,15 @@ void ActionMenu()
 	printf("\n\nVotre choix? : ");
 	scanf("%c", &PlayerAction);
 	getchar();
+	PlayerAction = toupper(PlayerAction);
 	switch(PlayerAction)
 	{
-		case 'v':
 		case 'V':
 			DisplayCharacter(hero);
 			break;
-		case 'f':
 		case 'F':
 			Fight(hero,monster);
 			break;
-		case 'q':
 		case 'Q':
 			DisplayOutro();
 			break;
@@ -275,13 +312,12 @@ void DisplayIntro()
 	printf("\n\t[C]réer un personnage\n\t[Q]uitter\n\nVotre choix? : ");
 	scanf("%c", &PlayerAction);
 	getchar();
+	PlayerAction = toupper(PlayerAction);
 	switch(PlayerAction)
 	{
-		case 'c':
 		case 'C':
 			InitPlayer(&hero);
 			break;
-		case 'q':
 		case 'Q':
 			DisplayOutro();
 			break;
