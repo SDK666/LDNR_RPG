@@ -16,16 +16,16 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171214
+ * lastupdate:	171213
  * lastupdateby:Lethael
  * 
  * game base for simplified RPG-like
  */
  
-/**
- * Structure Equipment
- *	Weapons, Armors, Shields
- */
+ /**
+  *  Structure Equipment
+  * Weapons, Armors, Shields
+  * */
 typedef struct Equipment
 {
 	char NameEquip[30];
@@ -70,7 +70,6 @@ char PlayerAction = '\0';
 
 /*	player	*/
 Character_t hero;
-/*	opponents	*/
 Character_t monster[2]; 
 /*	victories count	*/
 int victories=0;
@@ -202,7 +201,18 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int damage=0;
-	damage = (((rand() % (20 - 1 + 1)) + 1) + Attaker.StrBonus) - (Defender->ArmorClass + Defender->ResBonus); 
+	damage = ((rand() % (20 - 1 + 1)) + 1);/* If rnd give > 18 */ 
+	if (damage > 18 && damage < 21)
+	{ 
+		printf("You roll your dice and it do... a CRITICAL HIT !!! %d\n", damage);
+		damage += Attaker.StrBonus - (Defender->ArmorClass + Defender->ResBonus);
+		damage += 6;
+	}
+	else
+	{
+		printf("You roll your dice and it do...%d\n", damage);
+		damage += Attaker.StrBonus - (Defender->ArmorClass + Defender->ResBonus);
+	}
 	/*	check result	*/
 	if(damage == 0 )
 	{
@@ -249,7 +259,7 @@ void Fight(Character_t Fighter1, Character_t *TabFighter2)
 			DamageCharacter(Fighter1, &TabFighter2[i]);
 		//	for now it can only be an attack from the player
 		printf("%d vie monstre\n", TabFighter2[i].Health);
-	} while(Fighter1.Health >= 0 && TabFighter2[i].Health >= 0);	//	as long as both are alive
+	} while(Fighter1.Health > 0 && TabFighter2[i].Health > 0);	//	as long as both are alive
 	/*	after fight	*/
 	if(Fighter1.Health > 0)
 	{
@@ -281,15 +291,17 @@ void ActionMenu()
 	printf("\n\nVotre choix? : ");
 	scanf("%c", &PlayerAction);
 	getchar();
-	PlayerAction = toupper(PlayerAction);
 	switch(PlayerAction)
 	{
+		case 'v':
 		case 'V':
 			DisplayCharacter(hero);
 			break;
+		case 'f':
 		case 'F':
 			Fight(hero,monster);
 			break;
+		case 'q':
 		case 'Q':
 			DisplayOutro();
 			break;
