@@ -17,7 +17,7 @@
  * correction:	SDK666
  * translation:	SDK666
  * lastupdate:	171221
- * lastupdateby:Lethael
+ * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
  */
@@ -604,7 +604,10 @@ void DisplayIntro()
 void DisplayOutro()
 {
 	printf("|*************************************|\n");
-	printf("|*****          See you          *****|\n");
+	if(Language[0] == 'F')
+		printf("|*****         Au revoir         *****|\n");
+	else
+		printf("|*****          See you          *****|\n");
 	printf("|*************************************|\n");
 	exit(1);
 }
