@@ -547,7 +547,7 @@ void DisplayIntro()
 {
 	/*	invite screen	*/
 	printf("|*************************************|\n");
-	printf("|*****         Bienvenue         *****|\n");
+	printf("|*****          Welcome          *****|\n");
 	printf("|*************************************|\n");
 	
 	/*	Loop until Language > 1 char and Language != F or E	*/
