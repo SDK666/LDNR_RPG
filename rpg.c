@@ -226,7 +226,6 @@ void lvlUp(Character_t *character)
 	printf("Vous avez maintenant %d points de vie\n", character->Health);
 	
 	printf("Veuillez appuyer sur [entrée] pour continuer");
-	scanf("%s", Waiting);
 	getchar();
 	
 	//	Every 2 levels, player gain +1 to Str bonus
