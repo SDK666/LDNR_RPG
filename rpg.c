@@ -325,9 +325,9 @@ void Fight(Character_t *Fighter1, Character_t *TabFighter2)
 		PlayerAction[0] = toupper(PlayerAction[0]);
 		printf("Vous avez entre : %c\n", PlayerAction[0]);
 		/*	result of the chosen action	*/
-		if(PlayerAction != 'A' && PlayerAction != 'D')
+		if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
 				printf("Mauvais choix \n");
-		if (PlayerAction == 'A')
+		if (PlayerAction[0] == 'A')
 			DamageCharacter(*Fighter1, &TabFighter2[i]);
 		//	for now it can only be an attack from the player
 		printf("%d vie monstre\n", TabFighter2[i].Health);
