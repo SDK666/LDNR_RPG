@@ -16,7 +16,7 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171221
+ * lastupdate:	171215
  * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
@@ -67,8 +67,8 @@ typedef struct Character
 
 
 /*	player's choice	*/
-char PlayerAction[20] = "";
-char Language = '\0';
+char PlayerAction[20] = {'\0'};
+char Language[20] = {'\0'};
 
 /*	player	*/
 Character_t hero;
@@ -206,7 +206,7 @@ void InitPlayer(Character_t *character)
 {
 	int i;
 	/*	sets character name	*/
-	if(Language == 'F')
+	if(Language[0] == 'F')
 		printf("Quel est votre nom? \n");
 	else
 		printf("What's your name? \n");
@@ -263,7 +263,7 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 		damage = ((rand() % (6 - 1 + 1)) + 1) + Attaker.StrBonus;	//Actually 1D6 but it can be change with some weapons
 		if (ToHit >= 19 && ToHit <= 20)
 		{
-			if(Language == 'F')
+			if(Language[0] == 'F')
 			{
 				printf("Vous lancez le de, et faites... Un CRITIQUE !!! %d\n", ToHit);
 				printf("Vous frappez votre ennemi de toutes vos forces! Ses os se brisent sous vos coups\n");
@@ -280,7 +280,7 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 		}
 		if (ToHit < 19)
 		{
-			if(Language == 'F')
+			if(Language[0] == 'F')
 			{
 				printf("Vous lancez le de, et faites...! %d\n", ToHit);
 				printf("Vous faites %d degats !\n", damage);
@@ -295,7 +295,7 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 	}
 	if (ToHit < Defender->ArmorClass)
 	{
-		if(Language == 'F')
+		if(Language[0] == 'F')
 			printf("Vous ratez votre coup... Vous faites %d\n", ToHit);
 		else
 			printf("You missed... You did %d\n", ToHit);
@@ -313,6 +313,7 @@ void Fight(Character_t *Fighter1, Character_t *TabFighter2)
 		InitMonster(&TabFighter2[i]);
 	do
 	{
+		PlayerAction[0] = '\0';
 		/*	reset PlayerAction	*/
 		strcpy(PlayerAction, "");	
 		/*	invite Player to take action	*/
@@ -366,17 +367,25 @@ void ActionMenu()
 {
 	printf("Vous allez rencontrer un monstre !\n");
 	/*	reset PlayerAction	*/
-	PlayerAction = '\0';
+	PlayerAction[0] = '\0';
+	
+	/*	Loop until PlayerAction > 1 char	*/
 	/*	invite Player to take action	*/
-	printf("\nVous pouvez : ");
-	printf("\n\t[V]oir votre personnage");
-	printf("\n\t[F]aire le combat");
-	printf("\n\t[Q]uitter");
-	printf("\n\nVotre choix? : ");
-	scanf("%c", &PlayerAction);
-	getchar();
-	PlayerAction = toupper(PlayerAction);
-	switch(PlayerAction)
+	do
+	{
+		printf("\nVous pouvez : ");
+		printf("\n\t[V]oir votre personnage");
+		printf("\n\t[F]aire le combat");
+		printf("\n\t[Q]uitter");
+		printf("\n\nVotre choix? : ");
+		scanf("%s", PlayerAction);
+		getchar();
+		/*	result of the chosen action	*/
+		if(strlen(PlayerAction) > 1)
+			printf("Veuillez ne saisir qu'une lettre\n");
+	}while(strlen(PlayerAction) > 1);
+	PlayerAction[0] = toupper(PlayerAction[0]);
+	switch(*PlayerAction)
 	{
 		case 'V':
 			DisplayCharacter(hero);
@@ -400,21 +409,42 @@ void DisplayIntro()
 	printf("|*****         Bienvenue         *****|\n");
 	printf("|*************************************|\n");
 	
-	printf("Select your language\n[F]rancais\n[E]nglish\n");
-	scanf("%c", &Language);
-	getchar();
-	Language = toupper(Language);
-	/*	reset PlayerAction	*/
-	PlayerAction = '\0';
-	/*	invite Player to take action	*/
-	if (Language == 'F')
-		printf("\n\t[C]réer un personnage\n\t[Q]uitter\n\nVotre choix? : ");
-	else
-		printf("\n\t[C]reate your character\n\t[Q]uit\n\nYour choice? : ");
-	scanf("%c", &PlayerAction);
-	getchar();
-	PlayerAction = toupper(PlayerAction);
-	switch(PlayerAction)
+	/*	Loop until Language > 1 char and Language != F or E	*/
+	do
+	{	
+		printf("Select your language\n[F]rancais\n[E]nglish\n");
+		scanf("%s", Language);
+		getchar();
+		Language[0] = toupper(Language[0]);
+		/*	result of the chosen action	*/
+		if(strlen(Language) > 1)
+			printf("Veuillez ne saisir qu'une lettre\n");
+		if(Language[0] != 'F' || Language[0] != 'E')
+			printf("Veuillez saisir soit F soit E\n");
+		
+	}while(strlen(Language) > 1 || Language[0] != 'F' && Language[0] != 'E');
+	
+	/*	Loop until PlayerAction > 1 char and PlayerAction[0] != C or Q	*/
+	do
+	{	
+		/*	reset PlayerAction	*/
+		PlayerAction[0] = '\0';
+		/*	invite Player to take action	*/
+		if (Language[0] == 'F')
+			printf("\n\t[C]réer un personnage\n\t[Q]uitter\n\nVotre choix? : ");
+		else
+			printf("\n\t[C]reate your character\n\t[Q]uit\n\nYour choice? : ");
+		scanf("%s", PlayerAction);
+		getchar();
+		PlayerAction[0] = toupper(PlayerAction[0]);
+		/*	result of the chosen action	*/
+		if(strlen(PlayerAction) > 1)
+			printf("Veuillez ne saisir qu'une lettre\n");		
+		if(PlayerAction[0] != 'C' || PlayerAction[0] != 'Q')
+			printf("Veuillez saisir soit C soit Q\n");
+			
+	}while(strlen(PlayerAction) > 1 || PlayerAction[0] != 'C' && PlayerAction[0] != 'Q'); 
+	switch(PlayerAction[0])
 	{
 		case 'C':
 			InitPlayer(&hero);
