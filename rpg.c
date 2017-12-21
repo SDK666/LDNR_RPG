@@ -84,6 +84,13 @@ Inventory_t ShopInv[10];
 Equipment_t ShopEqu[5];
 
 /**
+ * function Random
+ * 	used to define all random values
+ * 	Minimum and Maximum parameters
+ **/
+ int RandomValues(int Minimum, int Maximum);
+ 
+/**
  * function InitPlayer
  * 	create the Player Character
  */
@@ -198,6 +205,12 @@ main()
 }
 
 /* #################### FONCTIONS ################### */
+int RandomValues(int Minimum, int Maximum)
+{
+	/*	Esay function for all random values	*/
+	return rand() % (Maximum - Minimum + 1) + Minimum;
+}
+
 void InitCharacter(Character_t *character)
 {
 	/*	Initialize Level, exp, and ExpNextLevel	*/
@@ -210,7 +223,7 @@ void InitCharacter(Character_t *character)
 	character->ResBonus = 0;	// Bonus for upgrade Health and Armor Class
 	/*	randomize Strength and Resistance	*/
 	/*	########## BEGIN STRENGTH ##########	*/
-	character->Strength = (rand() % (18 - 8 + 1)) + 8; //Between 3 and 18
+	character->Strength = RandomValues(8, 18); //Between 3 and 18
 	/*	Attribute Strenght Bonus if random is better than 13	*/
 	if(character->Strength >= 13 && character->Strength <=15)
 		character->StrBonus = 1;
@@ -223,7 +236,7 @@ void InitCharacter(Character_t *character)
 	/*	########## END STRENGTH ##########	*/
 	
 	/*	########## BEGIN RESISTANCE ##########	*/
-	character->Resistance = (rand() % (18 - 8 + 1)) + 8;
+	character->Resistance = RandomValues(8, 18);
 	/*	Attribute Resitance Bonus if random is better than 13	*/
 	if(character->Resistance >= 13 && character->Resistance <=15)
 		character->ResBonus = 1;
@@ -262,7 +275,7 @@ void lvlUp(Character_t *character)
 	character->Level += 1;
 	character->ExpNextLvl *= character->Level;
 	
-	character->Health += ((rand() % (6 - 1 + 1)) + 1);
+	character->Health += RandomValues(1, 6);
 	printf("Vous avez maintenant %d points de vie\n", character->Health);
 	
 	printf("Veuillez appuyer sur [entrée] pour continuer");
@@ -304,13 +317,13 @@ void MonsterInit(Character_t *monster, int rank)
 	}
 	monster->Level = rank;
 	monster->ArmorClass = armor;
-	monster->Health = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	monster->Health = RandomValues(1, 6) + bonus;
 	if(monster->Health <= 0)
 		monster->Health = 1;
-	monster->Strength = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	monster->Strength = RandomValues(1, 6) + bonus;
 	if(monster->Strength <= 0)
 		monster->Strength = 1;
-	monster->Resistance = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	monster->Resistance = RandomValues(1, 6) + bonus;
 	if(monster->Resistance <= 0)
 		monster->Resistance = 1;
 	monster->Exp = xp;
@@ -358,11 +371,11 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
-	ToHit = ((rand() % (20 - 1 + 1)) + 1) + Attaker.StrBonus;/* If rnd give >= 19 */ 
+	ToHit = RandomValues(1, 20) + Attaker.StrBonus;/* If rnd give >= 19 */ 
 	//	ToHit need to be sup than ArmorClass to make damages
 	if(ToHit >= Defender->ArmorClass)
 	{
-		damage = ((rand() % (6 - 1 + 1)) + 1) + Attaker.StrBonus;	//Actually 1D6 but it can be change with some weapons
+		damage = RandomValues(1, 6) + Attaker.StrBonus;	//Actually 1D6 but it can be change with some weapons
 		/*	test about bug	*/
 		if (ToHit > 20)
 			printf("*****\tVoila donc le bug :P\n");
