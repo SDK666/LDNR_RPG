@@ -16,7 +16,7 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171215
+ * lastupdate:	171221
  * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
@@ -67,13 +67,15 @@ typedef struct Character
 
 
 /*	player's choice	*/
-char PlayerAction[20] = {'\0'};
-char Language[20] = {'\0'};
+char PlayerAction[20] = "";
+char Language[20] = "";
 
 /*	player	*/
 Character_t hero;
 /*	opponents	*/
-Character_t monster[2]; 
+Character_t monstersList[2];
+/*	names for monsters	*/
+char monstersNames[100][255];
 /*	victories count	*/
 int victories=0;
 
@@ -88,10 +90,42 @@ Equipment_t ShopEqu[5];
 void InitPlayer(Character_t *character);
 
 /**
- * function InitMonster
+ * function MonsterCopy
+ * 	used to define fighter
+ * 	*MT (monster target) takes
+ * 		MS (monster source) attributes
+ */
+void MonsterCopy(Character_t *MT, Character_t MS);
+
+/**
+ * function MonsterInit
  * 	create the Non Player Character
  */
-void InitMonster(Character_t *TabMonster);
+void MonsterInit(Character_t *monster, int rank);
+
+/**
+ * function MonsterDisplay
+ * 	display the monster's detail
+ */
+void MonsterDisplay(Character_t monster);
+
+/**
+ * function MonstersList
+ * 	display the existing monsters
+ */
+void MonstersList(Character_t *TabMonster, int taille);
+
+/**
+ * function MonstersInitNames
+ * 	define the names for opponents
+ */
+void MonstersInitNames(Character_t * monsters);
+
+/**
+ * function MonstersInit
+ * 	create the Non Player Characters
+ */
+void MonstersInit(Character_t *TabMonster, int taille);
 
 /**
  * function InitCharacter
@@ -106,7 +140,13 @@ void InitCharacter(Character_t *character);
  * based on character_t
  */
 void lvlUp(Character_t *character);
- 
+
+/**
+ * Function InitFighter
+ * 	find a playable monster from *monsters
+ */
+void InitFighter(Character_t * monster, Character_t * monsters, int taille);
+
 /**
  * function DamageCharacter
  * 	define damages done by Attaker to *Defender
@@ -232,24 +272,86 @@ void lvlUp(Character_t *character)
 	if(character->Level % 2 == 0)
 		character->StrBonus += 1;
 }
-void InitMonster(Character_t *monster)
+
+void MonsterCopy(Character_t *MT, Character_t MS)
 {
-	
-	if(strcmp(monster->Name, "Goblin") == 0)
+	strcpy(MT->Name,MS.Name);
+	MT->Level = MS.Level;
+	MT->Health = MS.Health;
+	MT->Strength = MS.Strength;
+	MT->Resistance = MS.Resistance;
+	MT->Exp = MS.Exp;
+}
+
+void MonsterInit(Character_t *monster, int rank)
+{
+	int bonus = 0;	//	bonus point for health
+	int xp = 0;		//	XP hero will gain defeating the monster
+	int armor = 0;	//	monster's armor class
+	switch (rank)
 	{
-		monster->ArmorClass = 12;
-		monster->Health = ((rand() % (6 - 1 + 1)) + 1) - 1;	//1D6 -1
-		if(monster->Health <= 0)
-			monster->Health = 1;
-		monster->Exp = 500;
+		case 1:
+			bonus = 1;
+			xp = 600;
+			armor = 14;
+			break;
+		case 0:
+		default:
+			bonus = -1;
+			xp = 500;
+			armor = 12;
+			break;
 	}
-	if(strcmp(monster->Name, "Hobgoblin") == 0)
-	{
-		monster->ArmorClass = 14;
-		monster->Health = ((rand() % (6 - 1 + 1)) + 1) + 1; //1D6
-		monster->Exp = 600;
-	}	
+	monster->Level = rank;
+	monster->ArmorClass = armor;
+	monster->Health = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	if(monster->Health <= 0)
+		monster->Health = 1;
+	monster->Strength = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	if(monster->Strength <= 0)
+		monster->Strength = 1;
+	monster->Resistance = ((rand() % (6 - 1 + 1)) + 1) + bonus;
+	if(monster->Resistance <= 0)
+		monster->Resistance = 1;
+	monster->Exp = xp;
 	//DEBUG_PRINT(("%d\n", monster->ArmorClass)); //Just for test
+}
+
+void MonsterDisplay(Character_t monster)
+{
+	DEBUG_PRINT(("%s\n",monster.Name));
+	DEBUG_PRINT(("\tRang : %d\n",monster.Level));
+	DEBUG_PRINT(("\tVie : %d\n",monster.Health));
+	DEBUG_PRINT(("\tForce : %d\n",monster.Strength));
+	DEBUG_PRINT(("\tDefense : %d\n",monster.Resistance));
+}
+
+void MonstersList(Character_t *TabMonster, int taille)
+{
+	int i=0;
+	for(i=0;i<taille;i++)
+	{
+		MonsterDisplay(TabMonster[i]);
+		printf("\n");
+	}
+}
+
+void MonstersInitNames(Character_t * monsters)
+{
+	strcpy(monsters[0].Name,"Goblin");
+	strcpy(monsters[1].Name,"Hobgoblin");
+}
+
+void MonstersInit(Character_t *monsters, int taille)
+{
+	int i=0;
+	int rank = 0;
+	MonstersInitNames(monsters);
+	for(i=0;i<taille;i++)
+	{
+		rank=i;	//	modify when monster system exists
+		MonsterInit(&monsters[i], rank);
+	}
 }
 
 void DamageCharacter(Character_t Attaker, Character_t *Defender)
@@ -257,10 +359,13 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
 	ToHit = ((rand() % (20 - 1 + 1)) + 1) + Attaker.StrBonus;/* If rnd give >= 19 */ 
-	//	ToHit need to be sup than ArmorClass for to make damages
+	//	ToHit need to be sup than ArmorClass to make damages
 	if(ToHit >= Defender->ArmorClass)
 	{
 		damage = ((rand() % (6 - 1 + 1)) + 1) + Attaker.StrBonus;	//Actually 1D6 but it can be change with some weapons
+		/*	test about bug	*/
+		if (ToHit > 20)
+			printf("*****\tVoila donc le bug :P\n");
 		if (ToHit >= 19 && ToHit <= 20)
 		{
 			if(Language[0] == 'F')
@@ -302,42 +407,63 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 	}
 }	
 
-void Fight(Character_t *Fighter1, Character_t *TabFighter2)
+void InitFighter(Character_t * monster, Character_t * monsters, int taille)
 {
 	int i;
-	strcpy(TabFighter2[0].Name, "Goblin");
-	strcpy(TabFighter2[1].Name, "Hobgoblin");
-	i = (rand() % (1 - 0 + 1)) + 0; //Initialize i for TabMonsters
-			
-	if(TabFighter2[i].Health<=0)
-		InitMonster(&TabFighter2[i]);
+	i = (rand() % (1 - 0 + 1)) + 0; //Initialize i for monsters
+	if (i<0)
+		i=0;
+	if(i>taille)
+		i=taille-1;
+
+	if(monsters[i].Health<=0)
+		InitFighter(monster, monsters, taille);
+	else
+		MonsterCopy(monster, monsters[i]);
+}
+
+void Fight(Character_t *Fighter1, Character_t *Fighter2)
+{
 	do
 	{
-		PlayerAction[0] = '\0';
 		/*	reset PlayerAction	*/
-		strcpy(PlayerAction, "");	
-		/*	invite Player to take action	*/
-		printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n", TabFighter2[i].Name);
-		printf("\t[A]ttaquer\n\t[D]efendre\n");
-		printf("Votre choix? : ");
-		scanf("%s", &PlayerAction);
-		getchar();
-		/*	give feedback of keyboard entry	*/
-		PlayerAction[0] = toupper(PlayerAction[0]);
-		printf("Vous avez entre : %c\n", PlayerAction[0]);
-		/*	result of the chosen action	*/
-		if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
-				printf("Mauvais choix \n");
-		if (PlayerAction[0] == 'A')
-			DamageCharacter(*Fighter1, &TabFighter2[i]);
-		//	for now it can only be an attack from the player
-		printf("%d vie monstre\n", TabFighter2[i].Health);
-	} while(Fighter1->Health > 0 && TabFighter2[i].Health > 0);	//	as long as both are alive
+		strcpy(PlayerAction, "");
+		/*	Player's turn	*/
+		if(strcmp(Fighter1->Name,hero.Name)==0)
+		{
+			/*	invite Player to take action	*/
+			printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n", Fighter2->Name);
+			printf("\t[A]ttaquer\n\t[D]efendre\n");
+			printf("Votre choix? : ");
+			scanf("%s", PlayerAction);
+			getchar();
+			/*	give feedback of keyboard entry	*/
+			PlayerAction[0] = toupper(PlayerAction[0]);
+			printf("Vous avez entre : %c\n", PlayerAction[0]);
+			/*	result of the chosen action	*/
+			if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
+					printf("Mauvais choix \n");
+			if (PlayerAction[0] == 'A')
+				DamageCharacter(*Fighter1, Fighter2);
+		}
+		/*	Monster's turn	*/
+		else
+		{
+			printf("%s vous attaque\n", Fighter1->Name);
+			DamageCharacter(*Fighter1, Fighter2);
+		}
+		/*	display the remaining life	*/
+		printf("%d vie %s\n", Fighter2->Health, Fighter2->Name);
+		/*	next round	*/
+		if (Fighter2->Health > 0)
+			Fight(Fighter2,Fighter1);
+	} while(Fighter1->Health > 0 && Fighter2->Health > 0);	//	as long as both are alive
 	/*	after fight	*/
 	if(Fighter1->Health > 0)
 	{
 		victories++;
-		Fighter1->Exp += TabFighter2[i].Exp;
+		Fighter1->Exp += Fighter2->Exp;
+		printf("Vous avez gagne le combat !\n");
 		if(Fighter1->Exp >= Fighter1->ExpNextLvl)
 		{
 			printf("Vous avez gagne un niveau !\n");
@@ -365,9 +491,9 @@ void DisplayCharacter(Character_t character)
 
 void ActionMenu()
 {
-	printf("Vous allez rencontrer un monstre !\n");
 	/*	reset PlayerAction	*/
-	PlayerAction[0] = '\0';
+	strcpy(PlayerAction,"");
+	Character_t tempMonster;
 	
 	/*	Loop until PlayerAction > 1 char	*/
 	/*	invite Player to take action	*/
@@ -385,13 +511,15 @@ void ActionMenu()
 			printf("Veuillez ne saisir qu'une lettre\n");
 	}while(strlen(PlayerAction) > 1);
 	PlayerAction[0] = toupper(PlayerAction[0]);
-	switch(*PlayerAction)
+	switch(PlayerAction[0])
 	{
 		case 'V':
 			DisplayCharacter(hero);
 			break;
 		case 'F':
-			Fight(&hero,monster);
+			printf("Vous allez rencontrer un monstre !\n");
+			InitFighter(&tempMonster, monstersList, 2);
+			Fight(&hero, &tempMonster );
 			break;
 		case 'Q':
 			DisplayOutro();
@@ -412,7 +540,9 @@ void DisplayIntro()
 	/*	Loop until Language > 1 char and Language != F or E	*/
 	do
 	{	
-		printf("Select your language\n[F]rancais\n[E]nglish\n");
+		printf("Select your language\n");
+		printf("\t[F]rancais\n");
+		printf("\t[E]nglish\n");
 		scanf("%s", Language);
 		getchar();
 		Language[0] = toupper(Language[0]);
@@ -469,5 +599,7 @@ void DisplayOutro()
 void Play()
 {
 	DisplayIntro();
+	MonstersInit(monstersList, 2);
+	MonstersList(monstersList, 2);
 	ActionMenu();
 }
