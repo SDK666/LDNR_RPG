@@ -16,7 +16,7 @@
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171215
+ * lastupdate:	171221
  * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
@@ -67,7 +67,7 @@ typedef struct Character
 
 
 /*	player's choice	*/
-char PlayerAction = '\0';
+char PlayerAction[20] = "";
 char Language = '\0';
 
 /*	player	*/
@@ -314,17 +314,20 @@ void Fight(Character_t *Fighter1, Character_t *TabFighter2)
 	do
 	{
 		/*	reset PlayerAction	*/
-		PlayerAction = '\0';	
+		strcpy(PlayerAction, "");	
 		/*	invite Player to take action	*/
-		printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n\t[A]ttaquer\n\t[D]efendre\nVotre choix? : ", TabFighter2[i].Name);
-		scanf("%c", &PlayerAction);
+		printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n", TabFighter2[i].Name);
+		printf("\t[A]ttaquer\n\t[D]efendre\n");
+		printf("Votre choix? : ");
+		scanf("%s", &PlayerAction);
 		getchar();
 		/*	give feedback of keyboard entry	*/
-		printf("Vous avez entre : %c\n", PlayerAction);
+		PlayerAction[0] = toupper(PlayerAction[0]);
+		printf("Vous avez entre : %c\n", PlayerAction[0]);
 		/*	result of the chosen action	*/
-		if(PlayerAction != 'a')
+		if(PlayerAction != 'A' && PlayerAction != 'D')
 				printf("Mauvais choix \n");
-		if (PlayerAction == 'a')
+		if (PlayerAction == 'A')
 			DamageCharacter(*Fighter1, &TabFighter2[i]);
 		//	for now it can only be an attack from the player
 		printf("%d vie monstre\n", TabFighter2[i].Health);
