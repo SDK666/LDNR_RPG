@@ -17,7 +17,7 @@
  * correction:	SDK666
  * translation:	SDK666
  * lastupdate:	171221
- * lastupdateby:SDK666
+ * lastupdateby:Lethael
  * 
  * game base for simplified RPG-like
  */
