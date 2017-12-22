@@ -11,12 +11,22 @@
 # define DEBUG_PRINT(x) do {} while (0)
 #endif
 
+#if defined WIN32
+#define CLEAN_SCREEN "CLS"
+#elif defined __linux
+#define CLEAN_SCREEN "clear"
+#endif
+void cls (void)
+{
+	system(CLEAN_SCREEN);
+}
+
 /*
  * author:		Lethael
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171221
+ * lastupdate:	171222
  * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
@@ -545,6 +555,7 @@ void ActionMenu()
 
 void DisplayIntro()
 {
+	cls();
 	/*	invite screen	*/
 	printf("|*************************************|\n");
 	printf("|*****          Welcome          *****|\n");
@@ -552,10 +563,12 @@ void DisplayIntro()
 	
 	/*	Loop until Language > 1 char and Language != F or E	*/
 	do
-	{	
+	{
+		printf("\n");
 		printf("Select your language\n");
 		printf("\t[F]rancais\n");
 		printf("\t[E]nglish\n");
+		printf("\nYour choice : ");
 		scanf("%s", Language);
 		getchar();
 		Language[0] = toupper(Language[0]);
