@@ -334,7 +334,7 @@ void lvlUp(Character_t *character)
 	character->ExpNextLvl *= character->Level;
 	
 	character->Health += RandomValues(1, 6);
-	printf("Vous avez maintenant %d points de vie\n", character->Health);
+	printf("\tVous avez maintenant %d points de vie\n", character->Health);
 	
 	DisplayEnter();
 	
@@ -440,18 +440,19 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 		{
 			if(Language[0] == 'F')
 			{
-				printf("\t%s lance le de, et fait... Un CRITIQUE !!! %d\n", Attacker.Name, ToHit);
-				printf("\t%s frappe son ennemi de toutes ses forces!", Attacker.Name);
+				printf("\t%s lance le de, et fait... %d : un CRITIQUE !!!\n", Attacker.Name, ToHit);
+				printf("\t%s frappe son ennemi de toutes ses forces !", Attacker.Name);
 				printf(" Les os de %s se brisent sous les coups\n", Defender->Name);
 				damage += 6;
 				printf("\t%s fait %d degats !\n", Attacker.Name, damage);
 			}
 			else
 			{ 
-				printf("You roll your dice and it does... a CRITICAL HIT !!! %d\n", ToHit);
-				printf("You crush your enemy with all of your power ! Some of his bones are broken!\n");
+				printf("\t%s rolls the dice and it does... %d : a CRITICAL HIT !!!\n", Attacker.Name, ToHit);
+				printf("\t%s crushes the enemy with all of the power ! \n", Attacker.Name);
+				printf("Some of %s's bones are broken !\n", Defender->Name);
 				damage += 6;
-				printf("You make %d damages !\n", damage);
+				printf("\t%s make %d damages !\n", Attacker.Name, damage);
 			}
 		}
 		if (ToHit < 19)
@@ -464,7 +465,7 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 			else
 			{
 				printf("\t%s rolls the dice and it does...%d\n", Attacker.Name, ToHit);
-				printf("\t%s slices %s, and his blood falling to the ground\n", Attacker.Name, Defender->Name);
+				printf("\t%s slices %s, and his blood fell to the ground\n", Attacker.Name, Defender->Name);
 				printf("\t%s makes %d damages !\n", Attacker.Name, damage);
 			}
 		}
@@ -473,9 +474,9 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 	if (ToHit < Defender->ArmorClass)
 	{
 		if(Language[0] == 'F')
-			printf("\t%s rate son coup... et fait %d\n", Attacker.Name, ToHit);
+			printf("\t%s fait %d ... et rate son coup\n", Attacker.Name, ToHit);
 		else
-			printf("\t%s missed... and did %d\n", Attacker.Name, ToHit);
+			printf("\t%s did %d ... and missed\n", Attacker.Name, ToHit);
 	}
 }	
 
@@ -505,20 +506,40 @@ void Fight(Character_t *Fighter1, Character_t *Fighter2)
 		{
 			/*	invite Player to take action	*/
 			printf("\n");
-			printf("\tC'est votre tour d'attaquer contre %s, que voulez-vous faire ?\n", Fighter2->Name);
-			printf("\t\t[A]ttaquer\n");
-			printf("\t\t[D]efendre\n");
+			if (Language[0] == 'F')
+			{
+				printf("\tC'est votre tour d'attaquer contre %s, que voulez-vous faire ?\n", Fighter2->Name);
+				printf("\t\t[A]ttaquer\n");
+				printf("\t\t[D]efendre\n");
+			}
+			else
+			{
+				printf("\tIt is your turn to attack %s, what will you do ?\n", Fighter2->Name);
+				printf("\t\t[A]ttack\n");
+				printf("\t\t[D]efend\n");
+			}
 			DisplayChoose(PlayerAction);
 			/*	reset screen	*/
 			if (Language[0] == 'F')
+			{
 				DisplayTop("  COMBAT ");
+				/*	give feedback of keyboard entry	*/
+				printf("\tVous avez choisi : %c\n", PlayerAction[0]);
+			}
 			else
+			{
 				DisplayTop("  FIGHT  ");
-			/*	give feedback of keyboard entry	*/
-			printf("\tVous avez entre : %c\n", PlayerAction[0]);
+				/*	give feedback of keyboard entry	*/
+				printf("\tYou chose : %c\n", PlayerAction[0]);
+			}
 			/*	result of the chosen action	*/
 			if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
+			{
+				if (Language[0] == 'F')
 					printf("\tMauvais choix \n");
+				else
+					printf("\tWrong choice \n");
+			}
 			if (PlayerAction[0] == 'A')
 				DamageCharacter(*Fighter1, Fighter2);
 		}
@@ -526,11 +547,17 @@ void Fight(Character_t *Fighter1, Character_t *Fighter2)
 		else
 		{
 			printf("\n");
-			printf("\t%s vous attaque\n", Fighter1->Name);
+			if (Language[0] == 'F')
+				printf("\t%s vous attaque\n", Fighter1->Name);
+			else
+				printf("\t%s attacks you\n", Fighter1->Name);
 			DamageCharacter(*Fighter1, Fighter2);
 		}
 		/*	display the remaining life	*/
-		printf("\t\t%d vie %s\n", Fighter2->Health, Fighter2->Name);
+		if (Language[0] == 'F')
+			printf("\t\t%s a %d de vie restante\n", Fighter2->Name, Fighter2->Health);
+		else
+			printf("\t\t%s has %d health left\n", Fighter2->Name, Fighter2->Health);
 		/*	next round	*/
 		if (Fighter2->Health > 0)
 			Fight(Fighter2,Fighter1);
@@ -541,7 +568,10 @@ void Fight(Character_t *Fighter1, Character_t *Fighter2)
 	{
 		victories++;
 		Fighter1->Exp += Fighter2->Exp;
-		printf("\t\tVous avez gagne le combat !\n");
+		if (Language[0] == 'F')
+			printf("\t\tVous avez gagne le combat !\n");
+		else
+			printf("\t\tYou won the fight !\n");
 		if(Fighter1->Exp >= Fighter1->ExpNextLvl)
 		{
 			printf("\t\tVous avez gagne un niveau !\n");
@@ -574,14 +604,29 @@ void DisplayCharacter(Character_t character)
 {
     DisplayTop(" R.P.G.  ");
     
-	printf("\tCaractéristiques de %s\n",character.Name);
-	printf("\t\tLevel \t:\t\t%d\n",character.Level);
-	printf("\t\tVie \t:\t\t%d\n",character.Health);
-	printf("\t\tForce \t:\t\t%d\n",character.Strength);
-	printf("\t\tDéfense\t:\t\t%d\n",character.Resistance);
-	printf("\t\tExp\t:\t\t%d\n",character.Exp);
-	printf("\t\tVictoire :\t\t%d\n",victories);
-	printf("\t\tProchain niveau:\t%d exp\n", character.ExpNextLvl - character.Exp);
+    if (Language[0] == 'F')
+    {
+		printf("\tCaractéristiques de %s\n",character.Name);
+		printf("\t\tNiveau \t:\t\t%d\n",character.Level);
+		printf("\t\tVie \t:\t\t%d\n",character.Health);
+		printf("\t\tForce \t:\t\t%d\n",character.Strength);
+		printf("\t\tDéfense\t:\t\t%d\n",character.Resistance);
+		printf("\t\tExpérience :\t\t%d\n",character.Exp);
+		printf("\t\tVictoire :\t\t%d\n",victories);
+		printf("\t\tProchain niveau :\t%d exp\n", character.ExpNextLvl - character.Exp);
+	}
+    else
+    {
+		printf("\tCharacteristics of %s\n",character.Name);
+		printf("\t\tLevel \t:\t\t%d\n",character.Level);
+		printf("\t\tLife \t:\t\t%d\n",character.Health);
+		printf("\t\tForce \t:\t\t%d\n",character.Strength);
+		printf("\t\tDefense\t:\t\t%d\n",character.Resistance);
+		printf("\t\tExperience :\t\t%d\n",character.Exp);
+		printf("\t\tVictorie(s) :\t\t%d\n",victories);
+		printf("\t\tNext level :\t%d exp\n", character.ExpNextLvl - character.Exp);
+	}
+	
 	DisplayEnter();
 	ActionMenu();
 }
@@ -599,10 +644,20 @@ void ActionMenu()
 	do
 	{
 		printf("\n");
-		printf("\tVous pouvez : \n");
-		printf("\t\t[V]oir votre personnage\n");
-		printf("\t\t[F]aire le combat\n");
-		printf("\t\t[Q]uitter\n");
+		if (Language[0] == 'F')
+		{
+			printf("\tVous pouvez : \n");
+			printf("\t\t[V]oir votre personnage\n");
+			printf("\t\t[F]aire le combat\n");
+			printf("\t\t[Q]uitter\n");
+		}
+		else
+		{
+			printf("\tYou can : \n");
+			printf("\t\t[V]erify your character\n");
+			printf("\t\t[F]ight a monster\n");
+			printf("\t\t[Q]uit\n");
+		}
 		DisplayChoose(PlayerAction);
 		/*	result of the chosen action	*/
 		if(strlen(PlayerAction) > 1)
@@ -616,10 +671,15 @@ void ActionMenu()
 			break;
 		case 'F':
 			if (Language[0] == 'F')
+			{
 				DisplayTop("  COMBAT ");
+				printf("\tVous avez rencontré un monstre !\n");
+			}
 			else
+			{
 				DisplayTop("  FIGHT  ");
-			printf("\tVous allez rencontrer un monstre !\n");
+				printf("\tYou have encountered a monster !\n");
+			}
 			InitFighter(&tempMonster, monstersList, 2);
 			Fight(&hero, &tempMonster );
 			break;
