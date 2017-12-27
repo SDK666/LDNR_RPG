@@ -189,6 +189,24 @@ void DisplayCharacter(Character_t character);
 void ActionMenu();
 
 /**
+ * function ChooseLanguage
+ * 	select the language
+ */
+void ChooseLanguage();
+
+/**
+ * function DisplayLine
+ * 	an horizontal line
+ */
+void DisplayLine();
+
+/**
+ * function DisplayInterface
+ * 	screen
+ */
+void DisplayTitle();
+
+/**
  * function DisplayIntro
  * 	start screen
  */
@@ -199,6 +217,12 @@ void DisplayIntro();
  * 	end screen
  */
 void DisplayOutro();
+
+/**
+ * function DisplayWarning
+ * 	first message
+ */
+void DisplayWarning();
 
 /**
  * function Play();
@@ -553,22 +577,19 @@ void ActionMenu()
 	}
 }
 
-void DisplayIntro()
+void ChooseLanguage()
 {
-	cls();
-	/*	invite screen	*/
-	printf("|*************************************|\n");
-	printf("|*****          Welcome          *****|\n");
-	printf("|*************************************|\n");
-	
 	/*	Loop until Language > 1 char and Language != F or E	*/
 	do
 	{
 		printf("\n");
-		printf("Select your language\n");
-		printf("\t[F]rancais\n");
-		printf("\t[E]nglish\n");
-		printf("\nYour choice : ");
+		printf("\tSelect your language :\n");
+		printf("\t\t[F]rancais\n");
+		printf("\t\t[E]nglish\n");
+		printf("\n");
+		DisplayLine();
+		printf("\n");
+		printf("\tYour choice : ");
 		scanf("%s", Language);
 		getchar();
 		Language[0] = toupper(Language[0]);
@@ -579,7 +600,61 @@ void DisplayIntro()
 			printf("Veuillez saisir soit F soit E\n");
 		
 	}while(strlen(Language) > 1 || Language[0] != 'F' && Language[0] != 'E');
-	
+}
+
+void DisplayLine()
+{
+	int i;
+    printf("\t");
+    for(i=0; i<170;i++)
+        printf("_");
+    printf("\n\n");
+}
+
+void DisplayTitle()
+{
+	cls();
+    //	game title
+	printf("\n");
+    printf("\t\t\t\t\t\t\t\t *************************************** \n");
+    printf("\t\t\t\t\t\t\t\t|\t\t\t\t\t|\n");
+    printf("\t\t\t\t\t\t\t\t|\t\t R.P.G.  \t\t|\n");
+    printf("\t\t\t\t\t\t\t\t|\t\t\t\t\t|\n");
+    printf("\t\t\t\t\t\t\t\t *************************************** \n");
+
+    //	line
+    DisplayLine();
+}
+
+void DisplayWarning()
+{
+	cls();
+    printf("\n\n");
+    printf(" ########## ");
+    printf("Veuillez passer en plein PLEIN ECRAN avant de continuer");
+    printf(" ########## ");
+    printf("\n\n");
+    printf(" ########## ");
+    printf("Please switch to full screen");
+    printf(" ########## ");
+    printf("\n\n\n\n\n\n\n\n");
+    printf("\t\t Tapez ENTREE pour continuer.");
+    printf("\n\n");
+	printf("\t\t Press ENTER to continue.");
+	getchar();
+	DisplayTitle();
+	ChooseLanguage();
+	DisplayIntro();
+}
+
+void DisplayIntro()
+{
+	cls();
+	/*	invite screen	*/
+	printf("|*************************************|\n");
+	printf("|*****          Welcome          *****|\n");
+	printf("|*************************************|\n");
+		
 	/*	Loop until PlayerAction > 1 char and PlayerAction[0] != C or Q	*/
 	do
 	{	
@@ -627,7 +702,7 @@ void DisplayOutro()
 
 void Play()
 {
-	DisplayIntro();
+	DisplayWarning();
 	MonstersInit(monstersList, 2);
 	MonstersList(monstersList, 2);
 	ActionMenu();
