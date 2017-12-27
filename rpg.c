@@ -75,7 +75,6 @@ typedef struct Character
 	Equipment_t Equip[5];
 }Character_t;
 
-
 /*	player's choice	*/
 char PlayerAction[20] = "";
 char Language[20] = "";
@@ -201,7 +200,13 @@ void ChooseLanguage();
 void DisplayLine();
 
 /**
- * function DisplayInterface
+ * function DisplayTop
+ * 	for the top part of the screen
+ */
+void DisplayTop(char *text);
+
+/**
+ * function DisplayTitle
  * 	screen
  */
 void DisplayTitle();
@@ -611,19 +616,24 @@ void DisplayLine()
     printf("\n\n");
 }
 
-void DisplayTitle()
+void DisplayTop(char *text)
 {
-	cls();
-    //	game title
 	printf("\n");
     printf("\t\t\t\t\t\t\t\t *************************************** \n");
     printf("\t\t\t\t\t\t\t\t|\t\t\t\t\t|\n");
-    printf("\t\t\t\t\t\t\t\t|\t\t R.P.G.  \t\t|\n");
+    printf("\t\t\t\t\t\t\t\t|\t\t%s\t\t|\n",text);
     printf("\t\t\t\t\t\t\t\t|\t\t\t\t\t|\n");
     printf("\t\t\t\t\t\t\t\t *************************************** \n");
-
     //	line
     DisplayLine();
+}
+
+void DisplayTitle()
+{
+	char GameTitle[10] = " R.P.G.  ";
+	cls();
+    //	game title
+    DisplayTop(GameTitle);
 }
 
 void DisplayWarning()
@@ -651,9 +661,10 @@ void DisplayIntro()
 {
 	cls();
 	/*	invite screen	*/
-	printf("|*************************************|\n");
-	printf("|*****          Welcome          *****|\n");
-	printf("|*************************************|\n");
+	if (Language[0] == 'F')
+		DisplayTop("Bienvenue");
+	else
+		DisplayTop(" Welcome ");
 		
 	/*	Loop until PlayerAction > 1 char and PlayerAction[0] != C or Q	*/
 	do
@@ -691,12 +702,10 @@ void DisplayIntro()
 
 void DisplayOutro()
 {
-	printf("|*************************************|\n");
-	if(Language[0] == 'F')
-		printf("|*****         Au revoir         *****|\n");
+	if (Language[0] == 'F')
+		DisplayTop("Au revoir");
 	else
-		printf("|*****          See you          *****|\n");
-	printf("|*************************************|\n");
+		DisplayTop(" See you ");
 	exit(1);
 }
 
