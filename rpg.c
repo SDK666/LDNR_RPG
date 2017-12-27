@@ -165,9 +165,9 @@ void InitFighter(Character_t * monster, Character_t * monsters, int taille);
 
 /**
  * function DamageCharacter
- * 	define damages done by Attaker to *Defender
+ * 	define damages done by Attacker to *Defender
  */
-void DamageCharacter(Character_t Attaker, Character_t *Defender);
+void DamageCharacter(Character_t Attacker, Character_t *Defender);
 
 /**
  * function Fight
@@ -188,6 +188,12 @@ void DisplayCharacter(Character_t character);
 void ActionMenu();
 
 /**
+ * function DisplayChoose
+ * 	invite user
+ */
+void DisplayChoose(char *text);
+
+/**
  * function ChooseLanguage
  * 	select the language
  */
@@ -198,6 +204,12 @@ void ChooseLanguage();
  * 	an horizontal line
  */
 void DisplayLine();
+
+/**
+ * function DisplayEnter
+ * 	invit player to push enter
+ */
+void DisplayEnter();
 
 /**
  * function DisplayTop
@@ -287,7 +299,7 @@ void InitCharacter(Character_t *character)
 	DEBUG_PRINT(("%d Resistance\n", character->Resistance)); //Just for test
 	/*	########## END RESISTANCE ##########	*/
 	
-	character->ArmorClass = 10 + character->ResBonus; /* + nothing actually. Need to have Armor 
+	character->ArmorClass = 10 + character->ResBonus; // + nothing actually. Need to have Armor 
 	
 	/*	Initialize Health	*/
 	character->Health = 6 + character->ResBonus;	//	set character's health by 6 + ResBonus and for next lvl it's Health + rnd 1-6 + ResBonus 
@@ -296,12 +308,19 @@ void InitCharacter(Character_t *character)
 
 void InitPlayer(Character_t *character)
 {
+	cls();
+	if (Language[0] == 'F')
+		DisplayTop("  CREER  ");
+	else
+		DisplayTop(" CREATE  ");
 	int i;
 	/*	sets character name	*/
+	printf("\t");
 	if(Language[0] == 'F')
-		printf("Quel est votre nom? \n");
+		printf("Quel est votre nom ?");
 	else
-		printf("What's your name? \n");
+		printf("What's your name ?");
+	printf("\t");
 	scanf("%s", character->Name);
 	getchar();
 
@@ -317,8 +336,7 @@ void lvlUp(Character_t *character)
 	character->Health += RandomValues(1, 6);
 	printf("Vous avez maintenant %d points de vie\n", character->Health);
 	
-	printf("Veuillez appuyer sur [entrée] pour continuer");
-	getchar();
+	DisplayEnter();
 	
 	//	Every 2 levels, player gain +1 to Str bonus
 	if(character->Level % 2 == 0)
@@ -406,15 +424,15 @@ void MonstersInit(Character_t *monsters, int taille)
 	}
 }
 
-void DamageCharacter(Character_t Attaker, Character_t *Defender)
+void DamageCharacter(Character_t Attacker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
-	ToHit = RandomValues(1, 20) + Attaker.StrBonus;/* If rnd give >= 19 */ 
+	ToHit = RandomValues(1, 20) + Attacker.StrBonus;/* If rnd give >= 19 */ 
 	//	ToHit need to be sup than ArmorClass to make damages
 	if(ToHit >= Defender->ArmorClass)
 	{
-		damage = RandomValues(1, 6) + Attaker.StrBonus;	//Actually 1D6 but it can be change with some weapons
+		damage = RandomValues(1, 6) + Attacker.StrBonus;	//Actually 1D6 but it can be change with some weapons
 		/*	test about bug	*/
 		if (ToHit > 20)
 			printf("*****\tVoila donc le bug :P\n");
@@ -422,10 +440,11 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 		{
 			if(Language[0] == 'F')
 			{
-				printf("Vous lancez le de, et faites... Un CRITIQUE !!! %d\n", ToHit);
-				printf("Vous frappez votre ennemi de toutes vos forces! Ses os se brisent sous vos coups\n");
+				printf("\t%s lance le de, et fait... Un CRITIQUE !!! %d\n", Attacker.Name, ToHit);
+				printf("\t%s frappe son ennemi de toutes ses forces!", Attacker.Name);
+				printf(" Les os de %s se brisent sous les coups\n", Defender->Name);
 				damage += 6;
-				printf("Vous faites %d degats !\n", damage);
+				printf("\t%s fait %d degats !\n", Attacker.Name, damage);
 			}
 			else
 			{ 
@@ -439,13 +458,14 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 		{
 			if(Language[0] == 'F')
 			{
-				printf("Vous lancez le de, et faites...! %d\n", ToHit);
-				printf("Vous faites %d degats !\n", damage);
+				printf("\t%s lance le de, et fait... ! %d\n", Attacker.Name, ToHit);
+				printf("\t%s fait %d degats !\n", Attacker.Name, damage);
 			}
 			else
 			{
-				printf("You roll your dice and it does...%d\n", ToHit);
-				printf("You slice %s, and his blood falling to the ground\nYou make %d damages !\n", Defender->Name, damage);
+				printf("\t%s rolls the dice and it does...%d\n", Attacker.Name, ToHit);
+				printf("\t%s slices %s, and his blood falling to the ground\n", Attacker.Name, Defender->Name);
+				printf("\t%s makes %d damages !\n", Attacker.Name, damage);
 			}
 		}
 		Defender->Health -= damage;
@@ -453,9 +473,9 @@ void DamageCharacter(Character_t Attaker, Character_t *Defender)
 	if (ToHit < Defender->ArmorClass)
 	{
 		if(Language[0] == 'F')
-			printf("Vous ratez votre coup... Vous faites %d\n", ToHit);
+			printf("\t%s rate son coup... et fait %d\n", Attacker.Name, ToHit);
 		else
-			printf("You missed... You did %d\n", ToHit);
+			printf("\t%s missed... and did %d\n", Attacker.Name, ToHit);
 	}
 }	
 
@@ -484,65 +504,92 @@ void Fight(Character_t *Fighter1, Character_t *Fighter2)
 		if(strcmp(Fighter1->Name,hero.Name)==0)
 		{
 			/*	invite Player to take action	*/
-			printf("C'est votre tour d'attaquer contre %s, que voulez-vous faire?\n", Fighter2->Name);
-			printf("\t[A]ttaquer\n\t[D]efendre\n");
-			printf("Votre choix? : ");
-			scanf("%s", PlayerAction);
-			getchar();
+			printf("\n");
+			printf("\tC'est votre tour d'attaquer contre %s, que voulez-vous faire ?\n", Fighter2->Name);
+			printf("\t\t[A]ttaquer\n");
+			printf("\t\t[D]efendre\n");
+			DisplayChoose(PlayerAction);
+			/*	reset screen	*/
+			if (Language[0] == 'F')
+				DisplayTop("  COMBAT ");
+			else
+				DisplayTop("  FIGHT  ");
 			/*	give feedback of keyboard entry	*/
-			PlayerAction[0] = toupper(PlayerAction[0]);
-			printf("Vous avez entre : %c\n", PlayerAction[0]);
+			printf("\tVous avez entre : %c\n", PlayerAction[0]);
 			/*	result of the chosen action	*/
 			if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
-					printf("Mauvais choix \n");
+					printf("\tMauvais choix \n");
 			if (PlayerAction[0] == 'A')
 				DamageCharacter(*Fighter1, Fighter2);
 		}
 		/*	Monster's turn	*/
 		else
 		{
-			printf("%s vous attaque\n", Fighter1->Name);
+			printf("\n");
+			printf("\t%s vous attaque\n", Fighter1->Name);
 			DamageCharacter(*Fighter1, Fighter2);
 		}
 		/*	display the remaining life	*/
-		printf("%d vie %s\n", Fighter2->Health, Fighter2->Name);
+		printf("\t\t%d vie %s\n", Fighter2->Health, Fighter2->Name);
 		/*	next round	*/
 		if (Fighter2->Health > 0)
 			Fight(Fighter2,Fighter1);
 	} while(Fighter1->Health > 0 && Fighter2->Health > 0);	//	as long as both are alive
 	/*	after fight	*/
-	if(Fighter1->Health > 0)
+	/*	player wins	*/
+	if(Fighter1->Health > 0 && strcmp(Fighter1->Name,hero.Name) == 0)
 	{
 		victories++;
 		Fighter1->Exp += Fighter2->Exp;
-		printf("Vous avez gagne le combat !\n");
+		printf("\t\tVous avez gagne le combat !\n");
 		if(Fighter1->Exp >= Fighter1->ExpNextLvl)
 		{
-			printf("Vous avez gagne un niveau !\n");
+			printf("\t\tVous avez gagne un niveau !\n");
 			lvlUp(Fighter1);
 		}
+		DisplayEnter();
+	}
+	/*	player loses	*/
+	else if (Fighter1->Health > 0 && strcmp(Fighter1->Name,hero.Name) != 0)
+	{
+		printf("\n");
+		if (Language[0] == 'F')
+		{
+			printf("\tVous avez perdu le combat !\n");
+			printf("\tVous êtes mort ...\n");
+		}
+		else
+		{
+			printf("\tYou lost the fight !\n");
+			printf("\tYou are dead ...\n");
+		}
+		DisplayEnter();
+		/*	just quit the game for now	*/
+		DisplayOutro();
 	}
 	ActionMenu();
 }
 
 void DisplayCharacter(Character_t character)
 {
-	char Waiting[20];
-	printf("Caractéristiques de %s\n",character.Name);
-	printf("\tLevel \t:\t\t%d\n",character.Level);
-	printf("\tVie \t:\t\t%d\n",character.Health);
-	printf("\tForce \t:\t\t%d\n",character.Strength);
-	printf("\tDéfense\t:\t\t%d\n",character.Resistance);
-	printf("\tExp\t:\t\t%d\n",character.Exp);
-	printf("\tVictoire :\t\t%d\n",victories);
-	printf("\tProchain niveau:\t%d exp\n", character.ExpNextLvl - character.Exp);
-	printf("Veuillez appuyer sur [entrée] pour continuer");
-	getchar();
+    DisplayTop(" R.P.G.  ");
+    
+	printf("\tCaractéristiques de %s\n",character.Name);
+	printf("\t\tLevel \t:\t\t%d\n",character.Level);
+	printf("\t\tVie \t:\t\t%d\n",character.Health);
+	printf("\t\tForce \t:\t\t%d\n",character.Strength);
+	printf("\t\tDéfense\t:\t\t%d\n",character.Resistance);
+	printf("\t\tExp\t:\t\t%d\n",character.Exp);
+	printf("\t\tVictoire :\t\t%d\n",victories);
+	printf("\t\tProchain niveau:\t%d exp\n", character.ExpNextLvl - character.Exp);
+	DisplayEnter();
 	ActionMenu();
 }
 
 void ActionMenu()
 {
+	//DisplayTop(hero.Name);
+    DisplayTop(" R.P.G.  ");
 	/*	reset PlayerAction	*/
 	strcpy(PlayerAction,"");
 	Character_t tempMonster;
@@ -551,25 +598,28 @@ void ActionMenu()
 	/*	invite Player to take action	*/
 	do
 	{
-		printf("\nVous pouvez : ");
-		printf("\n\t[V]oir votre personnage");
-		printf("\n\t[F]aire le combat");
-		printf("\n\t[Q]uitter");
-		printf("\n\nVotre choix? : ");
-		scanf("%s", PlayerAction);
-		getchar();
+		printf("\n");
+		printf("\tVous pouvez : \n");
+		printf("\t\t[V]oir votre personnage\n");
+		printf("\t\t[F]aire le combat\n");
+		printf("\t\t[Q]uitter\n");
+		DisplayChoose(PlayerAction);
 		/*	result of the chosen action	*/
 		if(strlen(PlayerAction) > 1)
 			printf("Veuillez ne saisir qu'une lettre\n");
 	}while(strlen(PlayerAction) > 1);
-	PlayerAction[0] = toupper(PlayerAction[0]);
+	
 	switch(PlayerAction[0])
 	{
 		case 'V':
 			DisplayCharacter(hero);
 			break;
 		case 'F':
-			printf("Vous allez rencontrer un monstre !\n");
+			if (Language[0] == 'F')
+				DisplayTop("  COMBAT ");
+			else
+				DisplayTop("  FIGHT  ");
+			printf("\tVous allez rencontrer un monstre !\n");
 			InitFighter(&tempMonster, monstersList, 2);
 			Fight(&hero, &tempMonster );
 			break;
@@ -582,6 +632,20 @@ void ActionMenu()
 	}
 }
 
+void DisplayChoose(char *text)
+{
+	printf("\n");
+	DisplayLine();
+	printf("\n");
+	if (Language[0] == 'F')
+		printf("\tVotre choix : ");
+	else
+		printf("\tYour choice : ");
+	scanf("%s", text);
+	getchar();
+	text[0] = toupper(text[0]);
+}
+
 void ChooseLanguage()
 {
 	/*	Loop until Language > 1 char and Language != F or E	*/
@@ -591,17 +655,11 @@ void ChooseLanguage()
 		printf("\tSelect your language :\n");
 		printf("\t\t[F]rancais\n");
 		printf("\t\t[E]nglish\n");
-		printf("\n");
-		DisplayLine();
-		printf("\n");
-		printf("\tYour choice : ");
-		scanf("%s", Language);
-		getchar();
-		Language[0] = toupper(Language[0]);
+		DisplayChoose(Language);
 		/*	result of the chosen action	*/
 		if(strlen(Language) > 1)
 			printf("Veuillez ne saisir qu'une lettre\n");
-		if(Language[0] != 'F' || Language[0] != 'E')
+		if(Language[0] != 'F' && Language[0] != 'E')
 			printf("Veuillez saisir soit F soit E\n");
 		
 	}while(strlen(Language) > 1 || Language[0] != 'F' && Language[0] != 'E');
@@ -616,8 +674,19 @@ void DisplayLine()
     printf("\n\n");
 }
 
+void DisplayEnter()
+{
+	DisplayLine();
+	if (Language[0] == 'F')
+		printf("\n\tVeuillez appuyer sur [ENTREE] pour continuer");
+	else
+		printf("\n\tPlease press [ENTER] to continue");
+	getchar();
+}
+
 void DisplayTop(char *text)
 {
+	cls();
 	printf("\n");
     printf("\t\t\t\t\t\t\t\t *************************************** \n");
     printf("\t\t\t\t\t\t\t\t|\t\t\t\t\t|\n");
@@ -630,10 +699,8 @@ void DisplayTop(char *text)
 
 void DisplayTitle()
 {
-	char GameTitle[10] = " R.P.G.  ";
-	cls();
     //	game title
-    DisplayTop(GameTitle);
+    DisplayTop(" R.P.G.  ");
 }
 
 void DisplayWarning()
@@ -659,7 +726,6 @@ void DisplayWarning()
 
 void DisplayIntro()
 {
-	cls();
 	/*	invite screen	*/
 	if (Language[0] == 'F')
 		DisplayTop("Bienvenue");
@@ -673,16 +739,14 @@ void DisplayIntro()
 		PlayerAction[0] = '\0';
 		/*	invite Player to take action	*/
 		if (Language[0] == 'F')
-			printf("\n\t[C]réer un personnage\n\t[Q]uitter\n\nVotre choix? : ");
+			printf("\n\t[C]réer un personnage\n\t[Q]uitter\n");
 		else
-			printf("\n\t[C]reate your character\n\t[Q]uit\n\nYour choice? : ");
-		scanf("%s", PlayerAction);
-		getchar();
-		PlayerAction[0] = toupper(PlayerAction[0]);
+			printf("\n\t[C]reate your character\n\t[Q]uit\n");
+		DisplayChoose(PlayerAction);
 		/*	result of the chosen action	*/
 		if(strlen(PlayerAction) > 1)
 			printf("Veuillez ne saisir qu'une lettre\n");		
-		if(PlayerAction[0] != 'C' || PlayerAction[0] != 'Q')
+		if(PlayerAction[0] != 'C' && PlayerAction[0] != 'Q')
 			printf("Veuillez saisir soit C soit Q\n");
 			
 	}while(strlen(PlayerAction) > 1 || PlayerAction[0] != 'C' && PlayerAction[0] != 'Q'); 
@@ -713,6 +777,7 @@ void Play()
 {
 	DisplayWarning();
 	MonstersInit(monstersList, 2);
+	/*	TO DELETE FOR FINAL USE !!!	*/
 	MonstersList(monstersList, 2);
 	ActionMenu();
 }
