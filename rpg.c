@@ -26,8 +26,8 @@ void cls (void)
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	171222
- * lastupdateby:SDK666
+ * lastupdate:	180105
+ * lastupdateby:Lethael
  * 
  * game base for simplified RPG-like
  */
@@ -428,23 +428,18 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
-<<<<<<< HEAD
 	ToHit =  RandomValues(1, 20) + Attacker.StrBonus ;/* If rnd give >= 19 */ 
-=======
 	ToHit = RandomValues(1, 20) + Attacker.StrBonus;/* If rnd give >= 19 */ 
->>>>>>> 4bb0a7f34db09bf261c56e7154abf6f2cfb70e7d
 	//	ToHit need to be sup than ArmorClass to make damages
 	if(ToHit >= Defender->ArmorClass)
 	{
 		damage = RandomValues(1, 6) + Attacker.StrBonus;	//Actually 1D6 but it can be change with some weapons
-<<<<<<< HEAD
 		if (ToHit >= 19)
-=======
+
 		/*	test about bug	*/
 		if (ToHit > 20)
 			printf("*****\tVoila donc le bug :P\n");
 		if (ToHit >= 19 && ToHit <= 20)
->>>>>>> 4bb0a7f34db09bf261c56e7154abf6f2cfb70e7d
 		{
 			if(Language[0] == 'F')
 			{
