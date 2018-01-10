@@ -26,8 +26,8 @@ void cls (void)
  * creationdate:171204
  * correction:	SDK666
  * translation:	SDK666
- * lastupdate:	180105
- * lastupdateby:Lethael
+ * lastupdate:	180110
+ * lastupdateby:SDK666
  * 
  * game base for simplified RPG-like
  */
@@ -334,9 +334,10 @@ void lvlUp(Character_t *character)
 	character->ExpNextLvl *= character->Level;
 	
 	character->Health += RandomValues(1, 6);
-	printf("\tVous avez maintenant %d points de vie\n", character->Health);
-	
-	DisplayEnter();
+	if(Language[0] == 'F')
+		printf("\tVous avez maintenant %d points de vie\n", character->Health);
+	else
+		printf("\tNow you have %d health points\n", character->Health);
 	
 	//	Every 2 levels, player gain +1 to Str bonus
 	if(character->Level % 2 == 0)
@@ -428,18 +429,13 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 {
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
-	ToHit =  RandomValues(1, 20) + Attacker.StrBonus ;/* If rnd give >= 19 */ 
 	ToHit = RandomValues(1, 20) + Attacker.StrBonus;/* If rnd give >= 19 */ 
 	//	ToHit need to be sup than ArmorClass to make damages
 	if(ToHit >= Defender->ArmorClass)
 	{
 		damage = RandomValues(1, 6) + Attacker.StrBonus;	//Actually 1D6 but it can be change with some weapons
+		
 		if (ToHit >= 19)
-
-		/*	test about bug	*/
-		if (ToHit > 20)
-			printf("*****\tVoila donc le bug :P\n");
-		if (ToHit >= 19 && ToHit <= 20)
 		{
 			if(Language[0] == 'F')
 			{
@@ -721,9 +717,15 @@ void ChooseLanguage()
 		DisplayChoose(Language);
 		/*	result of the chosen action	*/
 		if(strlen(Language) > 1)
+		{
 			printf("Veuillez ne saisir qu'une lettre\n");
+			printf("Please choose only one letter\n");
+		}
 		if(Language[0] != 'F' && Language[0] != 'E')
+		{
 			printf("Veuillez saisir soit F soit E\n");
+			printf("Please choose either F or E\n");
+		}
 		
 	}while(strlen(Language) > 1 || Language[0] != 'F' && Language[0] != 'E');
 }
