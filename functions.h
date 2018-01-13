@@ -95,10 +95,23 @@ void InitFighter(Character_t * monster, Character_t * monsters, int taille);
 void DamageCharacter(Character_t Attacker, Character_t *Defender);
 
 /**
- * function Fight
- * 	define the involved fighters
+ * 	function Defense
+ * 	upgrade ResBonus by 1 and 
+ * 	StrBonus by 1 one time
+ **/
+void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight);
+
+/**
+ * function FightHeroturn
+ * 	Hero's turn
  */
-void Fight(Character_t *Fighter1, Character_t *Fighter2);
+void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,int ACBeforeFight);
+
+/**
+ * function FightMonsterturn
+ * 	Monster's turn
+ */
+void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBeforeFight, int ACHeroBeforeFight);
 
 /**
  * function DisplayCharacter

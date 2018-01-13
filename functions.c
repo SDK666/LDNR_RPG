@@ -246,6 +246,22 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 	}
 }	
 
+/**
+ * 	function Defense
+ * 	upgrade ResBonus by 1 and 
+ * 	StrBonus by 1 one time
+ **/
+void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight)
+{	
+	if (Defender->ArmorClass - ACBeforeFight < 3)
+	{
+		Defender->ArmorClass += 1;
+		printf("Vous avez %d maintenant CA\n", Defender->ArmorClass);
+	}
+	
+	if (Defender->StrBonus - StrBeforeFight == 0)
+		Defender->StrBonus += 1;
+}
 void InitFighter(Character_t * monster, Character_t * monsters, int taille)
 {
 	int i;
@@ -261,92 +277,90 @@ void InitFighter(Character_t * monster, Character_t * monsters, int taille)
 		MonsterCopy(monster, monsters[i]);
 }
 
-void Fight(Character_t *Fighter1, Character_t *Fighter2)
-{
+void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,int ACBeforeFight)
+{ 
+	
 	do
 	{
 		/*	reset PlayerAction	*/
 		strcpy(PlayerAction, "");
-		/*	Player's turn	*/
-		if(strcmp(Fighter1->Name,hero.Name)==0)
+	
+		/*	invite Player to take action	*/
+		printf("\n");
+		if (Language[0] == 'F')
 		{
-			/*	invite Player to take action	*/
-			printf("\n");
-			if (Language[0] == 'F')
-			{
-				printf("\tC'est votre tour d'attaquer contre %s, que voulez-vous faire ?\n", Fighter2->Name);
-				printf("\t\t[A]ttaquer\n");
-				printf("\t\t[D]efendre\n");
-			}
-			else
-			{
-				printf("\tIt is your turn to attack %s, what will you do ?\n", Fighter2->Name);
-				printf("\t\t[A]ttack\n");
-				printf("\t\t[D]efend\n");
-			}
-			DisplayChoose(PlayerAction);
-			/*	reset screen	*/
-			if (Language[0] == 'F')
-			{
-				DisplayTop("  COMBAT ");
-				/*	give feedback of keyboard entry	*/
-				printf("\tVous avez choisi : %c\n", PlayerAction[0]);
-			}
-			else
-			{
-				DisplayTop("  FIGHT  ");
-				/*	give feedback of keyboard entry	*/
-				printf("\tYou chose : %c\n", PlayerAction[0]);
-			}
-			/*	result of the chosen action	*/
-			if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
-			{
-				if (Language[0] == 'F')
-					printf("\tMauvais choix \n");
-				else
-					printf("\tWrong choice \n");
-			}
-			if (PlayerAction[0] == 'A')
-				DamageCharacter(*Fighter1, Fighter2);
+			printf("\tC'est votre tour d'attaquer contre %s, que voulez-vous faire ?\n", Monster->Name);
+			printf("\t\t[A]ttaquer\n");
+			printf("\t\t[D]efendre\n");
 		}
-		/*	Monster's turn	*/
 		else
 		{
-			printf("\n");
-			if (Language[0] == 'F')
-				printf("\t%s vous attaque\n", Fighter1->Name);
-			else
-				printf("\t%s attacks you\n", Fighter1->Name);
-			DamageCharacter(*Fighter1, Fighter2);
+			printf("\tIt is your turn to attack %s, what will you do ?\n", Monster->Name);
+			printf("\t\t[A]ttack\n");
+			printf("\t\t[D]efend\n");
 		}
+		DisplayChoose(PlayerAction);
+		/*	reset screen	*/
+		if (Language[0] == 'F')
+		{
+			DisplayTop("  COMBAT ");
+			/*	give feedback of keyboard entry	*/
+			printf("\tVous avez choisi : %c\n", PlayerAction[0]);
+		}
+		else
+		{
+			DisplayTop("  FIGHT  ");
+			/*	give feedback of keyboard entry	*/
+			printf("\tYou chose : %c\n", PlayerAction[0]);
+		}
+		/*	result of the chosen action	*/
+		if(PlayerAction[0] != 'A' && PlayerAction[0] != 'D')
+		{
+			if (Language[0] == 'F')
+				printf("\tMauvais choix \n");
+			else
+				printf("\tWrong choice \n");
+		}
+		if (PlayerAction[0] == 'A')
+			DamageCharacter(*Hero, Monster);
+		
+		if (PlayerAction[0] == 'D')
+			Defense(Hero, StrBeforeFight, ACBeforeFight);
+
+		/*	Monster's turn	*/
+			printf("\n");
 		/*	display the remaining life	*/
 		if (Language[0] == 'F')
-			printf("\t\t%s a %d de vie restante\n", Fighter2->Name, Fighter2->Health);
+			printf("\t\t%s a %d de vie restante\n", Monster->Name, Monster->Health);
 		else
-			printf("\t\t%s has %d health left\n", Fighter2->Name, Fighter2->Health);
+			printf("\t\t%s has %d health left\n", Monster->Name, Monster->Health);
 		/*	next round	*/
-		if (Fighter2->Health > 0)
-			Fight(Fighter2,Fighter1);
-	} while(Fighter1->Health > 0 && Fighter2->Health > 0);	//	as long as both are alive
+		if (Monster->Health > 0)
+			FightMonsterTurn(Monster,Hero, StrBeforeFight, ACBeforeFight);
+	} while(Hero->Health > 0 && Monster->Health > 0);	//	as long as both are alive
+	
 	/*	after fight	*/
 	/*	player wins	*/
-	if(Fighter1->Health > 0 && strcmp(Fighter1->Name,hero.Name) == 0)
+	if(Hero->Health > 0 && strcmp(Hero->Name,hero.Name) == 0)
 	{
+		/*	AC & StrBonus becomes again like before the fight	*/
+		Hero->ArmorClass = ACBeforeFight;
+		Hero->StrBonus = StrBeforeFight;
 		victories++;
-		Fighter1->Exp += Fighter2->Exp;
+		Hero->Exp += Monster->Exp;
 		if (Language[0] == 'F')
 			printf("\t\tVous avez gagne le combat !\n");
 		else
 			printf("\t\tYou won the fight !\n");
-		if(Fighter1->Exp >= Fighter1->ExpNextLvl)
+		if(Hero->Exp >= Hero->ExpNextLvl)
 		{
 			printf("\t\tVous avez gagne un niveau !\n");
-			lvlUp(Fighter1);
+			lvlUp(Hero);
 		}
 		DisplayEnter();
 	}
 	/*	player loses	*/
-	else if (Fighter1->Health > 0 && strcmp(Fighter1->Name,hero.Name) != 0)
+	else if (Hero->Health > 0 && strcmp(Hero->Name,hero.Name) != 0)
 	{
 		printf("\n");
 		if (Language[0] == 'F')
@@ -366,6 +380,25 @@ void Fight(Character_t *Fighter1, Character_t *Fighter2)
 	ActionMenu();
 }
 
+void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBeforeFight, int ACHeroBeforeFight)
+{ 	
+
+	printf("\n");
+	if (Language[0] == 'F')
+		printf("\t%s vous attaque\n", Monster->Name);
+	else
+		printf("\t%s attacks you\n", Monster->Name);
+	DamageCharacter(*Monster, Hero);
+	/*	display the remaining life	*/
+	if (Language[0] == 'F')
+		printf("\t\t%s a %d de vie restante\n", Monster->Name, Monster->Health);
+	else
+		printf("\t\t%s has %d health left\n", Monster->Name, Monster->Health);
+	/*	next round	*/
+	if (Monster->Health > 0)
+		FightHeroTurn(Hero,Monster, StrHeroBeforeFight, ACHeroBeforeFight); 
+}
+
 void DisplayCharacter(Character_t character)
 {
     DisplayTop(" R.P.G.  ");
@@ -377,6 +410,7 @@ void DisplayCharacter(Character_t character)
 		printf("\t\tVie \t:\t\t%d\n",character.Health);
 		printf("\t\tForce \t:\t\t%d\n",character.Strength);
 		printf("\t\tDéfense\t:\t\t%d\n",character.Resistance);
+		printf("\t\tClasse d'Armure\t:\t%d\n",character.ArmorClass);
 		printf("\t\tExpérience :\t\t%d\n",character.Exp);
 		printf("\t\tVictoire :\t\t%d\n",victories);
 		printf("\t\tProchain niveau :\t%d exp\n", character.ExpNextLvl - character.Exp);
@@ -388,6 +422,7 @@ void DisplayCharacter(Character_t character)
 		printf("\t\tLife \t:\t\t%d\n",character.Health);
 		printf("\t\tForce \t:\t\t%d\n",character.Strength);
 		printf("\t\tDefense\t:\t\t%d\n",character.Resistance);
+		printf("\t\tArmor Class\t:\t%d\n",character.ArmorClass);
 		printf("\t\tExperience :\t\t%d\n",character.Exp);
 		printf("\t\tVictorie(s) :\t\t%d\n",victories);
 		printf("\t\tNext level :\t%d exp\n", character.ExpNextLvl - character.Exp);
@@ -399,6 +434,7 @@ void DisplayCharacter(Character_t character)
 
 void ActionMenu()
 {
+	int valRecupStr, valRecupDef;
 	//DisplayTop(hero.Name);
     DisplayTop(" R.P.G.  ");
 	/*	reset PlayerAction	*/
@@ -446,8 +482,14 @@ void ActionMenu()
 				DisplayTop("  FIGHT  ");
 				printf("\tYou have encountered a monster !\n");
 			}
+			/**	Need to have Strbonus & ArmorClass
+			 * 	for use them for
+			 * 	Defense function
+			 **/
+			valRecupStr = hero.StrBonus;
+			valRecupDef = hero.ArmorClass;
 			InitFighter(&tempMonster, monstersList, 2);
-			Fight(&hero, &tempMonster );
+			FightHeroTurn(&hero, &tempMonster, valRecupStr, valRecupDef );
 			break;
 		case 'Q':
 			DisplayOutro();
