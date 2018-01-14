@@ -58,6 +58,7 @@ typedef struct Character
 	int Strength;	//	attack power
 	int Resistance;	//	defense
 	int ArmorClass;	//	Protection's value
+	int Victories;
 	int StrBonus;	//	strenght bonus if str >= 13
 	int ResBonus;	//	resistance bonus if str >= 13
 	Inventory_t Bag[5];

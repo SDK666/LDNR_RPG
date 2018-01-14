@@ -18,8 +18,6 @@ Character_t hero;
 Character_t monstersList[2];
 /*	names for monsters	*/
 char monstersNames[100][255];
-/*	victories count	*/
-int victories=0;
 
 /*	Inventory for shop	*/
 Inventory_t ShopInv[10];
@@ -73,9 +71,10 @@ int RandomValues(int Minimum, int Maximum)
  */
 void InitCharacter(Character_t *character)
 {
-	/*	Initialize Level, exp, and ExpNextLevel	*/
+	/*	Initialize Level, exp, victories and ExpNextLevel	*/
 	character->Level = 1;
 	character->Exp = 0;
+	character->Victories = 0;
 	character->ExpNextLvl = 1500;
 	
 	/*	Initialize bonus to 0	*/
@@ -476,7 +475,7 @@ void FightHeroTurn(Character_t * Hero, Character_t * Monster, int StrBeforeFight
 		/*	AC & StrBonus becomes again like before the fight	*/
 		Hero->ArmorClass = ACBeforeFight;
 		Hero->StrBonus = StrBeforeFight;
-		victories++;
+		Hero->Victories++;
 		Hero->Exp += Monster->Exp;
 		if (Language[0] == 'F')
 			printf("\t\tVous avez gagne le combat !\n");
@@ -569,7 +568,7 @@ void DisplayCharacter(Character_t character)
 		printf("\t\tDéfense\t:\t\t%d\n",character.Resistance);
 		printf("\t\tClasse d'Armure\t:\t%d\n",character.ArmorClass);
 		printf("\t\tExpérience :\t\t%d\n",character.Exp);
-		printf("\t\tVictoire :\t\t%d\n",victories);
+		printf("\t\tVictoire :\t\t%d\n",character.Victories);
 		printf("\t\tProchain niveau :\t%d exp\n", character.ExpNextLvl - character.Exp);
 	}
     else
@@ -581,7 +580,7 @@ void DisplayCharacter(Character_t character)
 		printf("\t\tDefense\t:\t\t%d\n",character.Resistance);
 		printf("\t\tArmor Class\t:\t%d\n",character.ArmorClass);
 		printf("\t\tExperience :\t\t%d\n",character.Exp);
-		printf("\t\tVictorie(s) :\t\t%d\n",victories);
+		printf("\t\tVictorie(s) :\t\t%d\n",character.Victories);
 		printf("\t\tNext level :\t%d exp\n", character.ExpNextLvl - character.Exp);
 	}
 	
