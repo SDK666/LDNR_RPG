@@ -114,6 +114,12 @@ void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,i
 void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBeforeFight, int ACHeroBeforeFight);
 
 /**
+ * function DisplayDeath
+ * 	shows last message
+ */
+void DisplayDeath();
+
+/**
  * function DisplayCharacter
  * 	shows the character stats
  */

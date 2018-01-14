@@ -256,7 +256,10 @@ void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight)
 	if (Defender->ArmorClass - ACBeforeFight < 3)
 	{
 		Defender->ArmorClass += 1;
-		printf("Vous avez %d maintenant CA\n", Defender->ArmorClass);
+		if(Language[0] == 'F')
+			printf("\tVous avez maintenant %d CA\n", Defender->ArmorClass);
+		else
+			printf("\tYou now have %d AC\n", Defender->ArmorClass);
 	}
 	
 	if (Defender->StrBonus - StrBeforeFight == 0)
@@ -360,22 +363,9 @@ void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,i
 		DisplayEnter();
 	}
 	/*	player loses	*/
-	else if (Hero->Health > 0 && strcmp(Hero->Name,hero.Name) != 0)
+	else if (Hero->Health > 0)
 	{
-		printf("\n");
-		if (Language[0] == 'F')
-		{
-			printf("\tVous avez perdu le combat !\n");
-			printf("\tVous êtes mort ...\n");
-		}
-		else
-		{
-			printf("\tYou lost the fight !\n");
-			printf("\tYou are dead ...\n");
-		}
-		DisplayEnter();
-		/*	just quit the game for now	*/
-		DisplayOutro();
+		DisplayDeath();
 	}
 	ActionMenu();
 }
@@ -391,12 +381,36 @@ void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBefore
 	DamageCharacter(*Monster, Hero);
 	/*	display the remaining life	*/
 	if (Language[0] == 'F')
-		printf("\t\t%s a %d de vie restante\n", Monster->Name, Monster->Health);
+		printf("\t\t%s a %d de vie restante\n", Hero->Name, Hero->Health);
 	else
-		printf("\t\t%s has %d health left\n", Monster->Name, Monster->Health);
+		printf("\t\t%s has %d health left\n", Hero->Name, Hero->Health);
 	/*	next round	*/
-	if (Monster->Health > 0)
-		FightHeroTurn(Hero,Monster, StrHeroBeforeFight, ACHeroBeforeFight); 
+	if (Hero->Health > 0)
+		FightHeroTurn(Hero,Monster, StrHeroBeforeFight, ACHeroBeforeFight);
+	else
+		DisplayDeath();
+}
+
+/**
+ * function DisplayDeath
+ * 	shows last message
+ */
+void DisplayDeath()
+{
+	printf("\n");
+	if (Language[0] == 'F')
+	{
+		printf("\tVous avez perdu le combat !\n");
+		printf("\tVous êtes mort ...\n");
+	}
+	else
+	{
+		printf("\tYou lost the fight !\n");
+		printf("\tYou are dead ...\n");
+	}
+	DisplayEnter();
+	/*	just quit the game for now	*/
+	DisplayOutro();
 }
 
 void DisplayCharacter(Character_t character)
