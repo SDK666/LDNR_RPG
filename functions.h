@@ -96,6 +96,14 @@ void MonstersInit(Character_t *TabMonster, int taille);
 void InitFighter(Character_t * monster, Character_t *TabMonster, int taille);
 
 /**
+ * function DisplayEnnemy
+ * 		show ASCII for :
+ * 		@param	Character_t M
+ * 		@return	void
+ */
+void DisplayEnnemy(Character_t M);
+
+/**
  * function DamageCharacter
  * 	define damages done by Attacker to *Defender
  */

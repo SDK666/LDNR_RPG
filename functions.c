@@ -313,6 +313,51 @@ void InitFighter(Character_t * monster, Character_t *TabMonster, int taille)
 }
 
 /**
+ * function DisplayEnnemy
+ * 		show ASCII for :
+ * 		@param	Character_t M
+ * 		@return	void
+ */
+void DisplayEnnemy(Character_t M)
+{
+	printf("\n");
+	switch(M.Level)
+	{
+		//	hobgoblin
+		case 1:
+			printf("\t            ,      ,  \n");
+			printf("\t           /(.-\"\"-.)\\\n");
+			printf("\t        |\\ \\/      \\/ /|\n");
+			printf("\t        | \\/ =.  .= \\/ |\n");
+			printf("\t        \\( \\  o\\/o  / )/\n");
+			printf("\t         \\_, '/  \\' ,_/\n");
+			printf("\t          /   \\__/   \\\n");
+			printf("\t          \\,___/\\___,/\n");
+			printf("\t        ___\\ \\|uu|/ /___\n");
+			printf("\t      /`    \\ .--. /    `\\\n");
+			printf("\t     /       '----'       \\\n");
+			break;
+		//	goblin
+		case 0:
+		default:
+			printf("\t             ,      ,\n");
+			printf("\t            /(.-\"\"-.)\\\n");
+			printf("\t        |\\  \\/      \\/  /|\n");
+			printf("\t        | \\ / =.  .= \\ / |\n");
+			printf("\t        \\( \\   o\\/o   / )/\n");
+			printf("\t         \\_, '-/  \\-' ,_/\n");
+			printf("\t           /   \\__/   \\\n");
+			printf("\t           \\ \\__/\\__/ /\n");
+			printf("\t         ___\\ \\|--|/ /___\n");
+			printf("\t       /`    \\      /    `\\\n");
+			printf("\t      /       '----'       \\\n");
+			break;
+	}
+	
+	printf("\t%s\n",M.Name);
+}
+
+/**
  * function DamageCharacter
  * 		define damages done by Attacker to * Defender
  * 		@param	Character_t Attacker
@@ -650,6 +695,8 @@ void ActionMenu()
 			valRecupStr = hero.StrBonus;
 			valRecupDef = hero.ArmorClass;
 			InitFighter(&tempMonster, monstersList, 2);
+			/*	splash screen	*/
+			DisplayEnnemy(tempMonster);
 			FightHeroTurn(&hero, &tempMonster, valRecupStr, valRecupDef );
 			break;
 		case 'Q':
