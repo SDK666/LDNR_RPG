@@ -9,26 +9,47 @@ functions.h
 
 Purpose : prototypes for the game functions.
 */
+
+/**
+ * function cls
+ * 		clear screen
+ * 		CLEAN_SCREEN depends on OS
+ * 		>>> works for Linux and Windows
+ */
 void cls (void);
 
 /**
- * function Play();
+ * function Play
  * 	runs the game
  */
 void Play();
 
 /**
- * function Random
+ * function RandomValues
  * 	used to define all random values
  * 	Minimum and Maximum parameters
- **/
- int RandomValues(int Minimum, int Maximum);
+ */
+int RandomValues(int Minimum, int Maximum);
+
+/**
+ * function InitCharacter
+ * 	create *character
+ * 	based on Character_t
+ */
+void InitCharacter(Character_t *character);
  
 /**
  * function InitPlayer
  * 	create the Player Character
  */
 void InitPlayer(Character_t *character);
+
+/**
+ * Function lvlUp
+ * upgrade player
+ * based on character_t
+ */
+void lvlUp(Character_t *character);
 
 /**
  * function MonsterCopy
@@ -60,7 +81,7 @@ void MonstersList(Character_t *TabMonster, int taille);
  * function MonstersInitNames
  * 	define the names for opponents
  */
-void MonstersInitNames(Character_t * monsters);
+void MonstersInitNames(Character_t *TabMonster);
 
 /**
  * function MonstersInit
@@ -69,49 +90,35 @@ void MonstersInitNames(Character_t * monsters);
 void MonstersInit(Character_t *TabMonster, int taille);
 
 /**
- * function InitCharacter
- * 	create *character
- * 	based on Character_t
- */
-void InitCharacter(Character_t *character);
-
-/**
- * Function lvlUp
- * upgrade player
- * based on character_t
- */
-void lvlUp(Character_t *character);
-
-/**
  * Function InitFighter
  * 	find a playable monster from *monsters
  */
-void InitFighter(Character_t * monster, Character_t * monsters, int taille);
+void InitFighter(Character_t * monster, Character_t *TabMonster, int taille);
 
 /**
  * function DamageCharacter
  * 	define damages done by Attacker to *Defender
  */
-void DamageCharacter(Character_t Attacker, Character_t *Defender);
+void DamageCharacter(Character_t Attacker, Character_t * Defender);
 
 /**
  * 	function Defense
  * 	upgrade ResBonus by 1 and 
  * 	StrBonus by 1 one time
  **/
-void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight);
+void Defense(Character_t * Defender, int StrBeforeFight, int ACBeforeFight);
 
 /**
  * function FightHeroturn
  * 	Hero's turn
  */
-void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,int ACBeforeFight);
+void FightHeroTurn(Character_t * Hero, Character_t * Monster, int StrBeforeFight,int ACBeforeFight);
 
 /**
  * function FightMonsterturn
  * 	Monster's turn
  */
-void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBeforeFight, int ACHeroBeforeFight);
+void FightMonsterTurn(Character_t * Monster, Character_t * Hero, int StrHeroBeforeFight, int ACHeroBeforeFight);
 
 /**
  * function DisplayDeath

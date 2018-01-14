@@ -1,5 +1,13 @@
 #include "functions.h"
 
+/*
+functions.c
+#######################################
+
+Purpose : the game functions.
+*/
+
+/* #################### GLOBALS ################### */
 /*	player's choice	*/
 char PlayerAction[20] = "";
 char Language[20] = "";
@@ -18,17 +26,51 @@ Inventory_t ShopInv[10];
 Equipment_t ShopEqu[5];
 
 /* #################### FONCTIONS ################### */
+
+/**
+ * function cls
+ * 		clear screen
+ * 		CLEAN_SCREEN depends on OS
+ * 		>>> works for Linux and Windows
+ */
 void cls (void)
 {
 	system(CLEAN_SCREEN);
 }
 
+/**
+ * function Play
+ * 		runs the game
+ * 		and initialize monsters
+ */
+void Play()
+{
+	DisplayWarning();
+	MonstersInit(monstersList, 2);
+	/*	TO DELETE FOR FINAL USE !!!	*/
+	MonstersList(monstersList, 2);
+	ActionMenu();
+}
+
+/**
+ * function RandomValues
+ * 		used to define all random values
+ * 		@param	int Minimum
+ * 		@param	int Maximum
+ * 		@return	int
+ */
 int RandomValues(int Minimum, int Maximum)
 {
-	/*	Esay function for all random values	*/
 	return rand() % (Maximum - Minimum + 1) + Minimum;
 }
 
+/**
+ * function InitCharacter
+ * 		initialize character's stats
+ * 		includes some DEBUG_PRINT
+ * 		@param	Character_t *character
+ * 		@return	void
+ */
 void InitCharacter(Character_t *character)
 {
 	/*	Initialize Level, exp, and ExpNextLevel	*/
@@ -73,6 +115,12 @@ void InitCharacter(Character_t *character)
 	DEBUG_PRINT(("%d Health\n", character->Health)); //Just for test
 }
 
+/**
+ * function InitPlayer
+ * 		invite the player to create character
+ * 		@param	Character_t *character
+ * 		@return	void
+ */
 void InitPlayer(Character_t *character)
 {
 	cls();
@@ -94,6 +142,12 @@ void InitPlayer(Character_t *character)
 	InitCharacter(character);
 }
 
+/**
+ * Function lvlUp
+ * 		upgrade player's stats
+ * 		@param	Character_t *character
+ * 		@return	void
+ */
 void lvlUp(Character_t *character)
 {
 	char Waiting[20];
@@ -111,6 +165,14 @@ void lvlUp(Character_t *character)
 		character->StrBonus += 1;
 }
 
+/**
+ * function MonsterCopy
+ * 		create a copy of a monster
+ * 		to use in a fight
+ * 		@param	Character_t *MT (monster target)
+ * 		@param	Character_t MS (monster source)
+ * 		@return	void
+ */
 void MonsterCopy(Character_t *MT, Character_t MS)
 {
 	strcpy(MT->Name,MS.Name);
@@ -121,6 +183,13 @@ void MonsterCopy(Character_t *MT, Character_t MS)
 	MT->Exp = MS.Exp;
 }
 
+/**
+ * function MonsterInit
+ * 		create the Non Player Character
+ * 		@param	Character_t *monster
+ * 		@param	int rank
+ * 		@return	void
+ */
 void MonsterInit(Character_t *monster, int rank)
 {
 	int bonus = 0;	//	bonus point for health
@@ -155,6 +224,13 @@ void MonsterInit(Character_t *monster, int rank)
 	//DEBUG_PRINT(("%d\n", monster->ArmorClass)); //Just for test
 }
 
+/**
+ * function MonsterDisplay
+ * 		shows the monster's stats
+ * 		only works in debug mode
+ * 		@param	Character_t monster
+ * 		@return	void
+ */
 void MonsterDisplay(Character_t monster)
 {
 	DEBUG_PRINT(("%s\n",monster.Name));
@@ -164,6 +240,15 @@ void MonsterDisplay(Character_t monster)
 	DEBUG_PRINT(("\tDefense : %d\n",monster.Resistance));
 }
 
+/**
+ * function MonstersList
+ * 		runs through the array of monsters
+ * 		to display each one's stats
+ * 		only works in debug mode
+ * 		@param	Character_t *TabMonster
+ * 		@param	int taille
+ * 		@return	void
+ */
 void MonstersList(Character_t *TabMonster, int taille)
 {
 	int i=0;
@@ -174,25 +259,68 @@ void MonstersList(Character_t *TabMonster, int taille)
 	}
 }
 
-void MonstersInitNames(Character_t * monsters)
+/**
+ * function MonstersInitNames
+ * 		define the names for opponents
+ * 		@param	Character_t *TabMonster
+ * 		@return	void
+ */
+void MonstersInitNames(Character_t *TabMonster)
 {
-	strcpy(monsters[0].Name,"Goblin");
-	strcpy(monsters[1].Name,"Hobgoblin");
+	strcpy(TabMonster[0].Name,"Goblin");
+	strcpy(TabMonster[1].Name,"Hobgoblin");
 }
 
-void MonstersInit(Character_t *monsters, int taille)
+/**
+ * function MonstersInit
+ * 		initialize the Non Player Characters
+ * 		@param	Character_t *TabMonster
+ * 		@param	int taille
+ * 		@return	void
+ */
+void MonstersInit(Character_t *TabMonster, int taille)
 {
 	int i=0;
 	int rank = 0;
-	MonstersInitNames(monsters);
+	MonstersInitNames(TabMonster);
 	for(i=0;i<taille;i++)
 	{
 		rank=i;	//	modify when monster system exists
-		MonsterInit(&monsters[i], rank);
+		MonsterInit(&TabMonster[i], rank);
 	}
 }
 
-void DamageCharacter(Character_t Attacker, Character_t *Defender)
+/**
+ * function InitFighter
+ * 		find a playable monster from the pool of monsters
+ * 		@param	Character_t * monster
+ * 		@param	Character_t *TabMonster
+ * 		@param	int taille
+ * 		@return	void
+ */
+void InitFighter(Character_t * monster, Character_t *TabMonster, int taille)
+{
+	int i;
+	i = RandomValues(0,1); //Initialize i for monsters
+	if (i<0)
+		i=0;
+	if(i>taille)
+		i=taille-1;
+
+	if(TabMonster[i].Health<=0)
+		InitFighter(monster, TabMonster, taille);
+	else
+		MonsterCopy(monster, TabMonster[i]);
+}
+
+/**
+ * function DamageCharacter
+ * 		define damages done by Attacker to * Defender
+ * 		@param	Character_t Attacker
+ * 		@param	Character_t * Defender
+ * 		@return	void
+ */
+void DamageCharacter(Character_t Attacker, Character_t * Defender)
 {
 	/*	init variables	*/
 	int ToHit=0, damage = 0;
@@ -248,10 +376,13 @@ void DamageCharacter(Character_t Attacker, Character_t *Defender)
 
 /**
  * 	function Defense
- * 	upgrade ResBonus by 1 and 
- * 	StrBonus by 1 one time
- **/
-void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight)
+ * 		upgrades ResBonus and StrBonus by 1 one time
+ * 		@param	Character_t * Defender
+ * 		@param	int StrBeforeFight
+ * 		@param	int ACBeforeFight
+ * 		@return	void
+ */
+void Defense(Character_t * Defender, int StrBeforeFight, int ACBeforeFight)
 {	
 	if (Defender->ArmorClass - ACBeforeFight < 3)
 	{
@@ -265,22 +396,18 @@ void Defense(Character_t *Defender, int StrBeforeFight, int ACBeforeFight)
 	if (Defender->StrBonus - StrBeforeFight == 0)
 		Defender->StrBonus += 1;
 }
-void InitFighter(Character_t * monster, Character_t * monsters, int taille)
-{
-	int i;
-	i = (rand() % (1 - 0 + 1)) + 0; //Initialize i for monsters
-	if (i<0)
-		i=0;
-	if(i>taille)
-		i=taille-1;
 
-	if(monsters[i].Health<=0)
-		InitFighter(monster, monsters, taille);
-	else
-		MonsterCopy(monster, monsters[i]);
-}
-
-void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,int ACBeforeFight)
+/**
+ * function FightHeroturn
+ * 		invite player to choose fight attitude
+ * 		and reacts accordingly
+ * 		@param	Character_t * Hero
+ * 		@param	Character_t * Monster
+ * 		@param	int StrBeforeFight
+ * 		@param	int ACBeforeFight
+ * 		@return	void
+ */
+void FightHeroTurn(Character_t * Hero, Character_t * Monster, int StrBeforeFight,int ACBeforeFight)
 { 
 	
 	do
@@ -344,7 +471,7 @@ void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,i
 	
 	/*	after fight	*/
 	/*	player wins	*/
-	if(Hero->Health > 0 && strcmp(Hero->Name,hero.Name) == 0)
+	if(Hero->Health > 0)
 	{
 		/*	AC & StrBonus becomes again like before the fight	*/
 		Hero->ArmorClass = ACBeforeFight;
@@ -363,14 +490,23 @@ void FightHeroTurn(Character_t *Hero, Character_t *Monster, int StrBeforeFight,i
 		DisplayEnter();
 	}
 	/*	player loses	*/
-	else if (Hero->Health > 0)
+	else if (Hero->Health <= 0)
 	{
 		DisplayDeath();
 	}
 	ActionMenu();
 }
 
-void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBeforeFight, int ACHeroBeforeFight)
+/**
+ * function FightMonsterturn
+ * 		Monster's attack
+ * 		@param	Character_t * Monster
+ * 		@param	Character_t * Hero
+ * 		@param	int StrBeforeFight
+ * 		@param	int ACBeforeFight
+ * 		@return	void
+ */
+void FightMonsterTurn(Character_t * Monster, Character_t * Hero, int StrHeroBeforeFight, int ACHeroBeforeFight)
 { 	
 
 	printf("\n");
@@ -393,7 +529,8 @@ void FightMonsterTurn(Character_t *Monster, Character_t *Hero, int StrHeroBefore
 
 /**
  * function DisplayDeath
- * 	shows last message
+ * 		shows last message before quitting the game
+ * 		@return	void
  */
 void DisplayDeath()
 {
@@ -413,6 +550,12 @@ void DisplayDeath()
 	DisplayOutro();
 }
 
+/**
+ * function DisplayCharacter
+ * 		shows the character stats
+ * 		@param	Character_t character
+ * 		@return	void
+ */
 void DisplayCharacter(Character_t character)
 {
     DisplayTop(" R.P.G.  ");
@@ -446,6 +589,11 @@ void DisplayCharacter(Character_t character)
 	ActionMenu();
 }
 
+/**
+ * function ActionMenu
+ * 		display main menu for player
+ * 		@return	void
+ */
 void ActionMenu()
 {
 	int valRecupStr, valRecupDef;
@@ -514,6 +662,12 @@ void ActionMenu()
 	}
 }
 
+/**
+ * function DisplayChoose
+ * 		invite user to choose from previously displayed menu
+ * 		@param	*text
+ * 		@return	void
+ */
 void DisplayChoose(char *text)
 {
 	printf("\n");
@@ -528,6 +682,11 @@ void DisplayChoose(char *text)
 	text[0] = toupper(text[0]);
 }
 
+/**
+ * function ChooseLanguage
+ * 		select the language (FR/EN)
+ * 		@return	void
+ */
 void ChooseLanguage()
 {
 	/*	Loop until Language > 1 char and Language != F or E	*/
@@ -553,6 +712,11 @@ void ChooseLanguage()
 	}while(strlen(Language) > 1 || Language[0] != 'F' && Language[0] != 'E');
 }
 
+/**
+ * function DisplayLine
+ * 		showsan horizontal line
+ * 		@return	void
+ */
 void DisplayLine()
 {
 	int i;
@@ -562,6 +726,11 @@ void DisplayLine()
     printf("\n\n");
 }
 
+/**
+ * function DisplayEnter
+ * 		invit player to push <enter>
+ * 		@return	void
+ */
 void DisplayEnter()
 {
 	DisplayLine();
@@ -572,6 +741,12 @@ void DisplayEnter()
 	getchar();
 }
 
+/**
+ * function DisplayTop
+ * 		for the top part of the screen
+ * 		@param	*text
+ * 		@return	void
+ */
 void DisplayTop(char *text)
 {
 	cls();
@@ -585,33 +760,23 @@ void DisplayTop(char *text)
     DisplayLine();
 }
 
+/**
+ * function DisplayTitle
+ * 		show the game title
+ * 		@return	void
+ */
 void DisplayTitle()
 {
     //	game title
     DisplayTop(" R.P.G.  ");
 }
 
-void DisplayWarning()
-{
-	cls();
-    printf("\n\n");
-    printf(" ########## ");
-    printf("Veuillez passer en plein PLEIN ECRAN avant de continuer");
-    printf(" ########## ");
-    printf("\n\n");
-    printf(" ########## ");
-    printf("Please switch to full screen");
-    printf(" ########## ");
-    printf("\n\n\n\n\n\n\n\n");
-    printf("\t\t Tapez ENTREE pour continuer.");
-    printf("\n\n");
-	printf("\t\t Press ENTER to continue.");
-	getchar();
-	DisplayTitle();
-	ChooseLanguage();
-	DisplayIntro();
-}
-
+/**
+ * function DisplayIntro
+ * 		start screen
+ * 		invite player to create character
+ * 		@return	void
+ */
 void DisplayIntro()
 {
 	/*	invite screen	*/
@@ -652,6 +817,11 @@ void DisplayIntro()
 	}
 }
 
+/**
+ * function DisplayOutro
+ * 		shows last message and leave the game
+ * 		@return	void
+ */
 void DisplayOutro()
 {
 	if (Language[0] == 'F')
@@ -661,11 +831,31 @@ void DisplayOutro()
 	exit(1);
 }
 
-void Play()
+/**
+ * function DisplayWarning
+ * 		first display
+ * 		in all languages (FR/EN)
+ * 		prompt language choice
+ * 		and general layout
+ * 		@return	void
+ */
+void DisplayWarning()
 {
-	DisplayWarning();
-	MonstersInit(monstersList, 2);
-	/*	TO DELETE FOR FINAL USE !!!	*/
-	MonstersList(monstersList, 2);
-	ActionMenu();
+	cls();
+    printf("\n\n");
+    printf(" ########## ");
+    printf("Veuillez passer en plein PLEIN ECRAN avant de continuer");
+    printf(" ########## ");
+    printf("\n\n");
+    printf(" ########## ");
+    printf("Please switch to full screen");
+    printf(" ########## ");
+    printf("\n\n\n\n\n\n\n\n");
+    printf("\t\t Tapez ENTREE pour continuer.");
+    printf("\n\n");
+	printf("\t\t Press ENTER to continue.");
+	getchar();
+	DisplayTitle();
+	ChooseLanguage();
+	DisplayIntro();
 }
