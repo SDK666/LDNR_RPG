@@ -1,3 +1,7 @@
+/*	By Lethael
+ * 		Characters = monsters
+ */
+
 package Characters;
 
 public class Heros extends Character {

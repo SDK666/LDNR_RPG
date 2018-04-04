@@ -1,6 +1,5 @@
 package Main;
 
-import Characters.Heros;
 import Characters.Races;
 import Characters.Character;
 public class Rpg {
