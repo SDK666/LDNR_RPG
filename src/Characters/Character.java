@@ -94,9 +94,9 @@ public class Character {
 			initHumans();
 		}
 	}
-	
+	/*	INIT MONSTERS	*/
 	/**
-	 * Because Goblin are too weaks, there looses 1 from Strength, Health & Resistance
+	 * Because Goblins are too weaks, they looses 1 from Strength, Health & Resistance
 	 */
 	public void initGoblins()
 	{
@@ -140,7 +140,7 @@ public class Character {
 			this.resistance = 1;
 		this.exp = 14;								
 	}
-	
+	/*	END INIT MONSTERS	*/
 	/**
 	 * 
 	 * @param Minimum
