@@ -9,11 +9,29 @@ Character::Character(string name)
 // copy constructor
 Character::Character( const Character &C)
 {
+	Name = C.Name;
+	this->Level = C.Level;
+	this->ArmorClass = C.ArmorClass;
+	this->Health = C.Health;
+	this->Strength = C.Strength;
+	this->StrBonus = C.StrBonus;
+	this->Resistance = C.Resistance;
+	this->ArmorClass = C.ArmorClass;
+	this->Exp = C.Exp;
 }
 
 // operator=
 Character & Character::operator=(const Character &C)
 {
+	Name = C.Name;
+	this->Level = C.Level;
+	this->ArmorClass = C.ArmorClass;
+	this->Health = C.Health;
+	this->Strength = C.Strength;
+	this->StrBonus = C.StrBonus;
+	this->Resistance = C.Resistance;
+	this->ArmorClass = C.ArmorClass;
+	this->Exp = C.Exp;
 }
 
 /**
@@ -112,6 +130,7 @@ void Character::MonsterInit(int rank)
 	this->Strength = RandomValues(1, 6) + bonus;
 	if(this->Strength <= 0)
 		this->Strength = 1;
+	this->StrBonus = 0;
 	this->Resistance = RandomValues(1, 6) + bonus;
 	if(this->Resistance <= 0)
 		this->Resistance = 1;

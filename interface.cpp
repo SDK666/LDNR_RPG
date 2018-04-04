@@ -445,7 +445,9 @@ void Interface::MonsterCopy(Character *MT, Character MS)
 	MT->Level = MS.Level;
 	MT->Health = MS.Health;
 	MT->Strength = MS.Strength;
+	MT->StrBonus = MS.StrBonus;
 	MT->Resistance = MS.Resistance;
+	MT->ArmorClass = MS.ArmorClass;
 	MT->Exp = MS.Exp;
 }
 

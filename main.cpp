@@ -4,7 +4,7 @@
  * author:		Lethael
  * creationdate:171204
  * convertion:	SDK666
- * lastupdate:	180307
+ * lastupdate:	040417
  * 
  * game base for simplified RPG-like
  * this is the C++ version
