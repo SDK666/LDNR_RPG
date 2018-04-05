@@ -4,20 +4,19 @@
 
 package Characters;
 
+import java.util.Scanner;
+
 public class Heros extends Character {
 
 	private int strBonus;	//	strenght bonus if str >= 13
-	private int resBonus;	//	resistance bonus if str >= 13
+	private int resBonus;	//	resistance bonus if resistance >= 13
 	private int expNextLevel;
 	private int victories;
 	
 	public Heros()
 	{
 		super();
-	}
-	
-	public Heros(String n) {
-		super(n);
+		initHero();
 	}
 
 	/*	GETTERS & SETTERS	*/
@@ -56,6 +55,10 @@ public class Heros extends Character {
 	
 	public void initHero()
 	{
+		Scanner heroName = new Scanner(System.in);
+		System.out.println("Veuillez saisir votre nom");
+		Name = heroName.nextLine();
+		System.out.println("Vous vous appelez donc : " + Name);
 		this.level = 1;
 		this.exp = 0;
 		this.expNextLevel = 500;

@@ -20,9 +20,9 @@ public class Rpg {
 			gob = new Character("Arzig");
 			hob = new Character("Azog");
 			hum = new Character("Vilain");
-			hero = new Heros("Player");
+			hero = new Heros();
 		}catch (NullPointerException e){
-			System.out.println("un des objets v√©hicules est rest√© √† null");
+			System.out.println("un des Characters est restÈ ‡ null");
 		}
 		
 		/*	Testing random values	*/
@@ -47,7 +47,7 @@ public class Rpg {
 			System.out.println("Health : " + hum.getHealth());
 		}
 		
-		for(int i = 0; i < 100; i++) {
+		/*for(int i = 0; i < 100; i++) {
 			hero.initHero();
 			System.out.println("New challenger !!!");
 			System.out.println("Force : " + hero.getStrength());
@@ -56,7 +56,7 @@ public class Rpg {
 			System.out.println("Bonus Res : " + hero.getResBonus());
 			System.out.println("Bonus str : " + hero.getStrBonus());
 			System.out.println("Armor Class : " + hero.getArmorClass());
-		}
+		}*/
 		
 		
 		gob = null;
