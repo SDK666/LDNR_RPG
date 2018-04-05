@@ -6,7 +6,7 @@ package Characters;
 
 import java.util.Scanner;
 
-public class Heros extends Character {
+public class Heros extends Characters {
 
 	private int strBonus;	//	strenght bonus if str >= 13
 	private int resBonus;	//	resistance bonus if resistance >= 13
@@ -56,8 +56,17 @@ public class Heros extends Character {
 	public void initHero()
 	{
 		Scanner heroName = new Scanner(System.in);
-		System.out.println("Veuillez saisir votre nom");
-		Name = heroName.nextLine();
+		boolean errorDigit;
+		do
+		{
+			errorDigit = false;
+			System.out.println("Veuillez saisir votre nom");
+			Name = heroName.nextLine();
+			
+			for(int i = 0; i < Name.length(); i++)
+				if(Character.isDigit(Name.charAt(i))) {
+					System.out.println("Veuillez n'inséré que des lettres"); errorDigit = true;}
+		}while(Name.isEmpty() || errorDigit == true);
 		System.out.println("Vous vous appelez donc : " + Name);
 		this.level = 1;
 		this.exp = 0;

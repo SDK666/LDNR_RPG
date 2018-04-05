@@ -4,7 +4,7 @@
 
 package Characters;
 
-public class Character {
+public class Characters {
 	
 	protected String Name;
 	protected int level;
@@ -14,12 +14,12 @@ public class Character {
 	protected int resistance;	//	defense
 	protected int exp;		// amount experience if hero defeat monster
 	
-	public Character()
+	public Characters()
 	{
 		Name = "Undefined";
 	}
 	
-	public Character(String n)
+	public Characters(String n)
 	{
 		this.setName(n);
 	}

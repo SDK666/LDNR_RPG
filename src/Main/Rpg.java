@@ -2,7 +2,7 @@ package Main;
 
 import Characters.Races;
 import Exceptions.ExceptionsCharacters;
-import Characters.Character;
+import Characters.Characters;
 import Characters.Heros;
 public class Rpg {
 
@@ -12,14 +12,14 @@ public class Rpg {
 		Races hobgobelin = Races.Hobgoblins;
 		Races human = Races.Human;
 		
-		Character gob = null;
-		Character hob = null;
-		Character hum = null;
+		Characters gob = null;
+		Characters hob = null;
+		Characters hum = null;
 		Heros hero = null;
 		try {
-			gob = new Character("Arzig");
-			hob = new Character("Azog");
-			hum = new Character("Vilain");
+			gob = new Characters("Arzig");
+			hob = new Characters("Azog");
+			hum = new Characters("Vilain");
 			hero = new Heros();
 		}catch (NullPointerException e){
 			System.out.println("un des Characters est resté à null");

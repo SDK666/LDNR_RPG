@@ -1,6 +1,6 @@
 package Exceptions;
 
-import Characters.Character;
+import Characters.Characters;
 
 public class ExceptionsCharacters extends Exception {
 	public ExceptionsCharacters(String message) {
