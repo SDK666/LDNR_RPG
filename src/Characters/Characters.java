@@ -222,7 +222,7 @@ public class Characters {
 				damage += 6;
 				System.out.println("Il vous fait " + damage + " de dégâts");
 			}else {
-				System.out.println(this.Name + "vous attaque et fait... " + toHit);
+				System.out.println(this.Name + " vous attaque et fait... " + toHit);
 				System.out.println("Il vous fait " + damage + " de dégâts");
 			}
 			hero.health -= damage;

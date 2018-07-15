@@ -54,6 +54,7 @@ public class Heros extends Characters {
 	public void initHero()
 	{
 		Scanner heroName = new Scanner(System.in);
+		
 		boolean errorDigit;
 		do
 		{
@@ -145,6 +146,23 @@ public class Heros extends Characters {
 		}else {
 			System.out.println("Vous ratez votre attaque...");
 		}
+		if(monster.health <= 0)
+			this.defeatEnemy(monster);
+	}
+	
+	public void heroTurn(Characters monster) {
+		int action = 0;
+		Scanner inputUser = new Scanner(System.in);
+		do {
+			do {
+				System.out.println("Que voulez-vous faire? : ");
+				System.out.println("1: Attaquer / 2: Défendre");
+				action = inputUser.nextInt();
+			}while(action != 1 && action != 2);
+
+			if(action == 1)
+				this.damagePlayer(monster);
+		}while(monster.health > 0);
 	}
 
 }
