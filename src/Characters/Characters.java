@@ -12,7 +12,9 @@ public class Characters {
 	protected int armorClass;	//	Protection's value
 	protected int strength;	//	attack power
 	protected int resistance;	//	defense
-	protected int exp;		// amount experience if hero defeat monster
+	protected int exp;
+	protected int strBonus;	//	strenght bonus if str >= 13
+	protected int resBonus;	//	resistance bonus if resistance >= 13// amount experience if hero defeat monster
 	
 	public Characters()
 	{
@@ -152,5 +154,28 @@ public class Characters {
 	int RandomValues(int Minimum, int Maximum)
 	{
 		return (int)(Math.random() * (Maximum-Minimum)) + Minimum;
+	}
+	
+	public void calculStrengthBonus () {
+		int bonus = 0;
+		/*	Attribute Strenght Bonus if random is better than 13	*/
+		if(this.strength >= 13 && this.strength <=15 && this.strBonus != 1) {
+			bonus = 1;
+		}
+		else if(this.strength >= 16 && this.strength <=17 && this.strBonus != 2) {
+			bonus = 2;
+		}
+		else if(this.strength == 18 && this.strBonus != 3) {
+			bonus = 3;
+		}
+		else
+			this.strBonus = 0;
+		
+		if(bonus > this.strBonus) {
+			this.strBonus = bonus;
+			System.out.println("Vous gagnez " + bonus + " en bonus de force");
+		}
+		/*	########## END STRENGTH ##########	*/
+		
 	}
 }
