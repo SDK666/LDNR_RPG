@@ -105,6 +105,25 @@ public class Heros extends Characters {
 		/*	Initialize Health	*/
 		this.health = 6 + this.resBonus;
 	}
+	
+	/**
+	 * @Lethael
+	 * @param monster
+	 */
+	public void defeatEnemy(Characters monster) {
+		if(monster.exp >= this.expNextLevel) {
+			int expSup = monster.exp - this.expNextLevel;
+			this.level += 1;
+			this.expNextLevel = (500 * (2 * this.level)) - expSup;
+			System.out.println("Vous avez pris un niveau ! Level : " + this.level);
+			System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
+		}else {
+			this.expNextLevel -= monster.exp;
+			System.out.println("Vous avez vaincu " + monster.Name);
+			System.out.println("Vous avez gagné : " + monster.exp + " points d'expériences");
+			System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
+		}
+	}
 
 }
 

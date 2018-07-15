@@ -31,6 +31,7 @@ public class Rpg {
 			System.out.println("Force : " + gob.getStrength());
 			System.out.println("Resistance : " + gob.getResistance());
 			System.out.println("Health : " + gob.getHealth());
+			hero.defeatEnemy(gob);
 		}
 		
 		for(int i = 0; i < 100; i++) {
@@ -38,6 +39,7 @@ public class Rpg {
 			System.out.println("Force : " + hob.getStrength());
 			System.out.println("Resistance : " + hob.getResistance());
 			System.out.println("Health : " + hob.getHealth());
+			hero.defeatEnemy(hob);
 		}
 		
 		for(int i = 0; i < 100; i++) {
@@ -45,6 +47,7 @@ public class Rpg {
 			System.out.println("Force : " + hum.getStrength());
 			System.out.println("Resistance : " + hum.getResistance());
 			System.out.println("Health : " + hum.getHealth());
+			hero.defeatEnemy(hum);
 		}
 		
 		/*for(int i = 0; i < 100; i++) {
