@@ -8,8 +8,6 @@ import java.util.Scanner;
 
 public class Heros extends Characters {
 
-	private int strBonus;	//	strenght bonus if str >= 13
-	private int resBonus;	//	resistance bonus if resistance >= 13
 	private int expNextLevel;
 	private int victories;
 	
@@ -76,16 +74,8 @@ public class Heros extends Characters {
 		
 		
 		this.strength = RandomValues(8, 19); //Between 3 and 18
-		/*	Attribute Strenght Bonus if random is better than 13	*/
-		if(this.strength >= 13 && this.strength <=15)
-			this.strBonus = 1;
-		else if(this.strength >= 16 && this.strength <=17)
-			this.strBonus = 2;
-		else if(this.strength == 18)
-			this.strBonus = 3;
-		else
-			this.strBonus = 0;
-		/*	########## END STRENGTH ##########	*/
+		this.calculStrengthBonus();
+		
 		
 		/*	########## BEGIN RESISTANCE ##########	*/
 		this.resistance = RandomValues(8, 19);
@@ -112,17 +102,36 @@ public class Heros extends Characters {
 	 */
 	public void defeatEnemy(Characters monster) {
 		if(monster.exp >= this.expNextLevel) {
-			int expSup = monster.exp - this.expNextLevel;
-			this.level += 1;
-			this.expNextLevel = (500 * (2 * this.level)) - expSup;
-			System.out.println("Vous avez pris un niveau ! Level : " + this.level);
-			System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
+			this.levelUp(monster);
 		}else {
 			this.expNextLevel -= monster.exp;
 			System.out.println("Vous avez vaincu " + monster.Name);
 			System.out.println("Vous avez gagné : " + monster.exp + " points d'expériences");
 			System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
 		}
+	}
+	
+	/**
+	 * @Lethael
+	 * @param monster
+	 * 
+	 * Upgrade life point between 1 -> 6
+	 * Every 2 lvl upgrade strength by 1
+	 */
+	public void levelUp(Characters monster) {
+		int expSup = monster.exp - this.expNextLevel;
+		this.level += 1;
+		this.expNextLevel = (500 * (2 * this.level)) - expSup;
+		int gainHealth = this.RandomValues(1, 7);
+		this.health = gainHealth;
+		if(this.level % 2 == 0) {
+			this.strength += 1;
+			System.out.println("Vous gagnez 1 point de force. ");
+			this.calculStrengthBonus();
+		}
+		System.out.println("Vous avez pris un niveau ! Level : " + this.level);
+		System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
+		System.out.println("Vous gagnez " + gainHealth+ " points de vie");
 	}
 
 }
