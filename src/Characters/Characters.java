@@ -107,14 +107,16 @@ public class Characters {
 		this.health = RandomValues(1, 7) - 1; 		//	points of life
 		if(this.health <= 0)
 			this.health = 1;
-		armorClass = 12;							//	Protection's value
+		this.armorClass = 12;							//	Protection's value
 		this.strength = RandomValues(1, 7) - 1;		//	attack power
 		if(this.strength <= 0)
 			this.strength = 1;
 		this.resistance = RandomValues(1, 7) - 1;	//	defense
 		if(this.resistance <= 0)
 			this.resistance = 1;
-		this.exp = 10;								
+		this.exp = 10;
+		this.resBonus = 0;
+		this.strBonus = 0;
 	}
 	
 	public void initHobgoblins()
@@ -122,12 +124,14 @@ public class Characters {
 		System.out.println("Je suis un Hobgobelin");
 		this.level = 1;
 		this.health = RandomValues(1, 7) + 1; 		//	points of life
-		armorClass = 14;							//	Protection's value
+		this.armorClass = 14;							//	Protection's value
 		this.strength = RandomValues(1, 7) + 1;		//	attack power
 		this.resistance = RandomValues(1, 7) + 1;	//	defense
 		if(this.resistance <= 0)
 			this.resistance = 1;
-		this.exp = 17;								
+		this.exp = 17;	
+		this.resBonus = 0;
+		this.strBonus = 0;
 	}
 	
 	public void initHumans()
@@ -135,12 +139,14 @@ public class Characters {
 		System.out.println("Je suis un Humain");
 		this.level = 1;
 		this.health = RandomValues(1, 7); 		//	points of life
-		armorClass = 13;							//	Protection's value
+		this.armorClass = 13;							//	Protection's value
 		this.strength = RandomValues(1, 7);		//	attack power
 		this.resistance = RandomValues(1, 7);	//	defense
 		if(this.resistance <= 0)
 			this.resistance = 1;
-		this.exp = 14;								
+		this.exp = 14;	
+		this.resBonus = 0;
+		this.strBonus = 0;
 	}
 	/*	END INIT MONSTERS	*/
 	/**
@@ -202,4 +208,28 @@ public class Characters {
 			System.out.println("Vous gagnez " + bonus + " en bonus de resistance");
 		}
 	}
+	
+	public void damageMonster(Heros hero) {
+		int toHit = RandomValues(1, 21) + this.strBonus;
+		
+		if(toHit >= hero.armorClass) {
+			int damage = this.RandomValues(1, 7) + this.strBonus;
+			
+			if(toHit >= 19) {
+				System.out.println(this.Name + " vous attaque et fait... " + toHit);
+				System.out.println("Attaque CRITIQUE !" + this.Name + " vous frappe de toutes ses forces!");
+				System.out.println("Vos os se brisent sous l'impact de ses coups");
+				damage += 6;
+				System.out.println("Il vous fait " + damage + " de dégâts");
+			}else {
+				System.out.println(this.Name + "vous attaque et fait... " + toHit);
+				System.out.println("Il vous fait " + damage + " de dégâts");
+			}
+			hero.health -= damage;
+		}else {
+			System.out.println(this.Name + " vous rate complétement...");
+		}
+	}
+	
+	
 }
