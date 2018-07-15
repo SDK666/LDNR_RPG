@@ -156,9 +156,12 @@ public class Characters {
 		return (int)(Math.random() * (Maximum-Minimum)) + Minimum;
 	}
 	
+	/**
+	 * @Lethael
+	 */
 	public void calculStrengthBonus () {
 		int bonus = 0;
-		/*	Attribute Strenght Bonus if random is better than 13	*/
+
 		if(this.strength >= 13 && this.strength <=15 && this.strBonus != 1) {
 			bonus = 1;
 		}
@@ -175,7 +178,28 @@ public class Characters {
 			this.strBonus = bonus;
 			System.out.println("Vous gagnez " + bonus + " en bonus de force");
 		}
-		/*	########## END STRENGTH ##########	*/
 		
+	}
+	
+	/**
+	 * @Lethael
+	 * Like calculStrengthBonus 
+	 */
+	public void calculResBonus() {
+		int bonus = 0;
+		/*	Attribute Resitance Bonus if random is better than 13	*/
+		if(this.resistance >= 13 && this.resistance <=15)
+			bonus = 1;
+		else if(this.resistance >= 16 && this.resistance <=17)
+			bonus = 2;
+		else if(this.resistance == 18)
+			bonus = 3;
+		else
+			this.resBonus = 0;
+		
+		if(bonus > this.resBonus) {
+			this.resBonus = bonus;
+			System.out.println("Vous gagnez " + bonus + " en bonus de resistance");
+		}
 	}
 }

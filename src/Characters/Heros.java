@@ -79,16 +79,7 @@ public class Heros extends Characters {
 		
 		/*	########## BEGIN RESISTANCE ##########	*/
 		this.resistance = RandomValues(8, 19);
-		/*	Attribute Resitance Bonus if random is better than 13	*/
-		if(this.resistance >= 13 && this.resistance <=15)
-			this.resBonus = 1;
-		else if(this.resistance >= 16 && this.resistance <=17)
-			this.resBonus = 2;
-		else if(this.resistance == 18)
-			this.resBonus = 3;
-		else
-			this.resBonus = 0;
-		/*	########## END RESISTANCE ##########	*/
+		this.calculResBonus();
 		
 		this.armorClass = 10 + this.resBonus; // + nothing actually. Need to have Armor 
 		
