@@ -124,6 +124,28 @@ public class Heros extends Characters {
 		System.out.println("Encore " + this.expNextLevel + " avant de monter de niveau");
 		System.out.println("Vous gagnez " + gainHealth+ " points de vie");
 	}
+	
+	public void damagePlayer(Characters monster) {
+		int toHit = RandomValues(1, 21) + this.strBonus;
+		
+		if(toHit >= monster.armorClass) {
+			int damage = this.RandomValues(1, 7) + this.strBonus;
+			
+			if(toHit >= 19) {
+				System.out.println("Vous attaquez est faites... " + toHit);
+				System.out.println("Attaque CRITIQUE ! Vous frappez " + monster.Name + " de toutes vos forces!");
+				System.out.println("Ses os se brisent sous l'impact de vos coups");
+				damage += 6;
+				System.out.println("Vous faites " + damage + " de dégâts");
+			}else {
+				System.out.println("Vous attaquez est faite... " + toHit);
+				System.out.println("Vous faites " + damage + " de dégâts");
+			}
+			monster.health -= damage;
+		}else {
+			System.out.println("Vous ratez votre attaque...");
+		}
+	}
 
 }
 
